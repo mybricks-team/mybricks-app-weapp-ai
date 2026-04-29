@@ -1,0 +1,103 @@
+.myBranchMergeContainer {
+  .top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 24px;
+
+    .icon {
+      margin: 0 16px;
+      font-size: 24px;
+      color: var(--mybricks-color-primary);
+    }
+  }
+
+  .content {
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      width: 100%;
+
+      .left {
+        display: flex;
+        gap: 12px;
+
+        .item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .colorBlock {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+          }
+        }
+      }
+
+      .right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+
+    .comInfo {
+      position: relative;
+      display: flex;
+      border: 1px solid #d9d9d9;
+      border-radius: 8px;
+      background: #fafafa;
+      overflow: auto;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background-color: #d9d9d9;
+        z-index: 1;
+      }
+
+      .left,
+      .right {
+        flex: 1;
+        padding: 12px;
+        // overflow: auto;
+        background: white;
+        display: flex;
+        flex-direction: column;
+
+        .branchLabel {
+          font-size: 13px;
+          font-weight: 600;
+          color: #fff;
+          margin-bottom: 12px;
+          padding: 8px 12px;
+          background: linear-gradient(135deg, #1890ff 0%, #1677DD 100%);
+          border-radius: 4px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+          flex-shrink: 0;
+        }
+
+        .emptyState {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 200px;
+          color: #999;
+          font-size: 14px;
+          flex: 1;
+        }
+      }
+
+      .left {
+        border-right: 1px solid #d9d9d9;
+      }
+    }
+  }
+}
