@@ -14,7 +14,7 @@ const buildAppEntryCode = (appConfig: Taro.AppConfig, ) => {
   }, "")}
 
   import { EMPTY_OBJ } from '@tarojs/shared'
-  import { createRouter, createMemoryHistory, handleAppMountWithTabbar } from '@tarojs/router'
+  import { createRouter, createMemoryHistory, handleAppMountWithTabbar, stacks } from '@tarojs/router'
   import { window, Current } from '@tarojs/runtime'
   import { createReactApp, reactMeta } from '@tarojs/plugin-framework-react/dist/runtime'
 
@@ -23,7 +23,7 @@ const buildAppEntryCode = (appConfig: Taro.AppConfig, ) => {
 
   import { findDOMNode, render, unstable_batchedUpdates } from 'react-dom'
   import { defineCustomElementTaroPullToRefreshCore } from '@tarojs/components/dist/components'
-  import stacks from '@tarojs/router/dist/router/stack.js';
+  import { resetInteraction } from '@tarojs/taro'
 
   const appConfig = ${JSON.stringify(appConfig)}
 
@@ -32,6 +32,8 @@ const buildAppEntryCode = (appConfig: Taro.AppConfig, ) => {
 
     React.useLayoutEffect(() => {
       // 初始化
+      resetInteraction()
+
       reactMeta.PageContext = EMPTY_OBJ
       reactMeta.destroy()
       reactMeta.destroy = () => {}

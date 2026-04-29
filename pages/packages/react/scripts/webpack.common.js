@@ -49,17 +49,19 @@ module.exports = {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
     alias: {
       '@': path.resolve(__dirname, '../../../src'),
-      // "@mybricks/sdk-for-app": "/Users/lianglihao/Documents/GitHub/sdk-for-app/src",
-      // ------ taro ------
-      // '@tarojs/taro$': '@tarojs/taro-h5',
-      '@tarojs/taro$': path.resolve(__dirname, '../../../src/pages/design/app-configs/getAiView/utils/componentRuntime/taro-h5/dist/index.js'),
-      '@tarojs/taro-h5/dist/api/index': path.resolve(__dirname, '../../../src/pages/design/app-configs/getAiView/utils/componentRuntime/taro-h5/dist/index.js'),
-      '@tarojs/runtime$': path.resolve(__dirname, '../../../src/pages/design/app-configs/getAiView/utils/componentRuntime/@tarojs/runtime/dist/index.js'),
-      '@tarojs/components/dist/components': path.resolve(__dirname, '../../../src/pages/design/app-configs/getAiView/utils/componentRuntime/taro-components/dist/components/index.js'),
 
-      // "@mybricks/rxai": 'E:/myBricks/rxai/src/index.ts',
+      // -- 本地依赖 --
       '@mybricks/plugin-ai': path.resolve(__dirname, '../../../../../plugin-ai/packages/plugin/src/index'),
-      '@mybricks/sdk-for-app': path.resolve(__dirname, '../../../../../sdk-for-app/src')
+      '@mybricks/sdk-for-app': path.resolve(__dirname, '../../../../../sdk-for-app/src'),
+
+      // -- taro polyfill --
+      '@tarojs/taro$': path.resolve(__dirname, './polyfill/taro/h5.ts'),
+      '@tarojs/plugin-framework-react': '@mybricks/tarojs-plugin-framework-react',
+      '@tarojs/router': '@mybricks/tarojs-router',
+      '@tarojs/runtime': '@mybricks/tarojs-runtime',
+      '@tarojs/taro-h5': '@mybricks/tarojs-taro-h5',
+      '@tarojs/components$': '@mybricks/tarojs-components/lib/react',
+      '@tarojs/components': '@mybricks/tarojs-components',
     },
   },
   externals: [
