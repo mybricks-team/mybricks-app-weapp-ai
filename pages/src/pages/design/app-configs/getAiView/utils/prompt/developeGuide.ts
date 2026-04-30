@@ -512,7 +512,7 @@ interface SchemeItem {
   path: string;
   /** 请求参数定义（可选） */
   request?: Record<string, FieldDescriptor>;
-  /** 响应参数定义 */
+  /** 真实的响应参数定义（非HTTP响应） */
   response: Record<string, FieldDescriptor>;
 }
 
@@ -542,8 +542,8 @@ const scheme = [
     "response": {
       "code": {
         "required": true,
-        "type": "number",
-        "description": "状态码"
+        "type": "string",
+        "description": "结果标识: sucess 或 error"
       },
       "message": {
         "required": true,
@@ -586,8 +586,8 @@ const scheme = [
     "response": {
       "code": {
         "required": true,
-        "type": "number",
-        "description": "状态码"
+        "type": "string",
+        "description": "结果标识: sucess 或 error"
       },
       "message": {
         "required": true,
@@ -714,7 +714,11 @@ describe('mock', () => {
   // 上面 getUserById 直接返回一个axios.get，可以确定里面有status、data字段
   spyOn(dataSource, 'getUserById').mockReturn({
     status: 200,
-    data: { id: 1, name: '张三', age: 18 },
+    data: { 
+      code: 'success',
+      message: '获取用户信息成功',
+      data: { id: 1, name: '张三', age: 18 }
+    },
   })
 })
 
