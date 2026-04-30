@@ -45,8 +45,7 @@ module.exports = merge(common, {
       },
       {
         context: ['/biz/'],
-        // target: 'https://my.mybricks.world/',
-        target: 'http://dev.manateeai.com/',
+        target: 'https://my.mybricks.world/',
         secure: false,
         changeOrigin: true,
         logLevel:'debug',
