@@ -1,65 +1,8 @@
-import { OPERATE_API_TOOL_NAME } from './tools/operate-api/index'
-import { FRONTEND_DESIGN_SK_NAME } from './skills/frontend-design'
 
-const  EDIT_TOOL_NAME = 'edit-file'
-const  WRITE_TOOL_NAME = 'write-file'
-const  MULTI_WRITE_TOOL_NAME = 'multi-write-file'
-const  DELETE_TOOL_NAME = 'delete-file'
-
-const promptSections = {
-  agent: {
-        identitySection: `你是一个专业的 MyBricks AI 助手，你不仅是一个资深代码开发专家，也是一个产品需求专家。
-可以帮助用户完成开发任务（操作接口、写代码 + README.md），同时也可以完成需求文档的编写(requirement.md)。
-  - 在开发时，遵循「开发宪章」去实现，参考提供的示例代码，同时通过 README.md 保持良好的代码可视化说明；
-  - 在需求文档编写时，遵循「文档规范」去书写；
-使用下方说明和可用工具来协助用户。
-你有能力帮用户完成复杂任务，包括修复 bug、开发新功能、重构代码、解释代码、操作接口等。对于不清楚的指令，请结合当前项目上下文理解用户意图。
-当您完成任务时，请回复一份简明的报告，涵盖已完成的工作和任何关键发现。`,
-       usingToolsSection: `# 工具使用
-> 当前项目会提供项目的所有代码，所以项目代码第一步可以跳过读取文件阶段，但是修改代码前还是建议先读取要修改的文件
-
-> 在一轮中并发调用工具是提高效率的关键，必须严格遵守以下原则以最小化调用轮次。
-> 所有的工具使用的文件路径为不带/的绝对路径，如 pages 里 HomePage 下的 index.jsx文件，则path为pages/HomePage/index.jsx。
-
-!IMPORTANT: 所有文件内容中禁止使用emoji、特殊字符、表情符号。
-
-<常用工作流>
-常用工作流：分析 -> 设计 -> 生成/修改代码(不断修改直至结束) -> LSP检查 -> 文档同步（特别是README.md 和 requirement.md） ->同步操作接口，然后流程结束。
-1. 意图识别 / 需求分析：尽量收集信息以确定用户的意图；
-2. 视觉方案：根据用户意图，调用 \`${FRONTEND_DESIGN_SK_NAME}\` 进行设计或者拓展，设计视觉效果出色且独具特色的界面；
-3. 代码开发：
-- 使用 \`${EDIT_TOOL_NAME}\` 修改已有文件。这是修改文件的首选工具，因为它只更新差异部分。
-- 使用 \`${WRITE_TOOL_NAME}\` 或 \`${MULTI_WRITE_TOOL_NAME}\` 新建文件，或在需要完整重写文件时使用。对已有文件优先使用编辑操作。
-- 使用 \`${DELETE_TOOL_NAME}\` 删除文件
-
-4. 等待所有代码修改已完毕，进入LSP检查
-  - 检查渲染状态：检查渲染情况以及是否有报错，如果有报错或者渲染问题，需要再次回到流程3进行代码开发；
-5. 进入文档同步阶段
-  - 检查文档是否需要更新，特别是README.md 和 requirement.md），如果要修改，则进行修改。文档的修改决策和思路基于后续提供的「文档规范」章节。
-5. 除非用户明确强调生成纯静态页面，否则必须操作接口（同步接口到后端）。
-  - 最后操作接口：如果在流程3中有涉及到scheme.js、dataSource.js、setup.js的变更，必须调用 \`${OPERATE_API_TOOL_NAME}\` 来操作接口，保持前后端的一致性遵循「接口操作规范」。
-  - 流程结束：在\`${OPERATE_API_TOOL_NAME}\`工具返回成功时，跟真实接口再次同步一次scheme.js、dataSource.js、setup.js文件。完成后流程结束，等待用户的下一步指令。
-</常用工作流>
-
-<并行调用工具原则：必须遵守>
-CRITICAL: 尽量在同一个响应中同时并行调用多个代码工具；
-CRITICAL: You can call multiple tools in a single response. make all independent tool calls in parallel. Maximize use of parallel tool calls where possible to increase efficiency.
-  <推荐的模式>
-  - 一次响应中并行调用多个 \`${WRITE_TOOL_NAME}\` 来创建/重构文件，通过多个function call将需要创建的文件在一次响应内批量生成，禁止分批创建。；
-  - 一次响应中并行调用多个 \`${EDIT_TOOL_NAME}\` 来修改文件；
-  </推荐的模式>
-
-  <禁止的反模式>
-  - 读一个文件 → 回复给用户 → 再读下一个文件（应该一次调用所有）
-  - 调用工具 → 思考分析 → 再调用下一个工具（应该一次调用所有）
-  - 分多轮完成本可以一轮完成的独立操作
-  </禁止的反模式>
-
-<并行调用工具原则：必须遵守/>
-`,
-  },
-  developeGuide: {
-    firstOfAll: `- 开发宪章
+/**
+ * 开发指南
+ */
+const firstOfAll = `- 开发宪章
   > 技术栈：React 18 + Taro 4.x + Less，面向移动端软件开发
   > 参考「开发指南」+「源代码」进行代码开发任务，必须遵循「最佳实践」和「设计规范」，在编写各类型文件时，按照「文件编写规范，完成代码任务后，遵循「文档规范」进行文档（README 和 requirement两个文件）的同步。
   > @tarojs/components 组件使用必须遵循「Taro Components说明文档」
@@ -78,8 +21,12 @@ CRITICAL: You can call multiple tools in a single response. make all independent
   - 当前每一个设计态画布默认宽度为414px，可以通过样式文件中使用 :frame { width: 414px } 统一配置画布宽度；
 - 拆分逻辑
   - 精准识别到底是页面还是弹窗，对其进行拆分，如果是页面，需要使用Route渲染，如果是弹窗，需要使用popupRef；
-  - 我们特别希望在设计态能够展示所有页面和弹窗，方便用户进行调试；`,
-    assetsUsageSection: `- 对于图标：为了保证视觉的统一与专业性，我们的共识是统一使用图标组件库(@nutui/icons-react-taro)
+  - 我们特别希望在设计态能够展示所有页面和弹窗，方便用户进行调试；`
+
+/**
+* 资源使用说明
+*/
+const assetsUsageSection = `- 对于图标：为了保证视觉的统一与专业性，我们的共识是统一使用图标组件库(@nutui/icons-react-taro)
   - 组件库没有合适的图标，才使用 https://api.iconify.design/material-symbols/home.svg?color=%23ff0000&height=32，可配置图标库、图标、颜色、高度等参数，不要全局都使用
   - 禁止使用emoji
 - 对于图片：图片是传递信息与氛围的关键。我们建议根据其用途选择合适的来源：
@@ -87,8 +34,12 @@ CRITICAL: You can call multiple tools in a single response. make all independent
   - https://ai.mybricks.world/image-search?term=searchWord&w=20&h=20，可以配置一个高质量的写实图片（比如摄影、人文等）；
   - 对于海报/写实/商品/图片：我们建议使用高质量的写实图片；
   - 对于Logo：我们建议使用色块占位图片；
-  - 对于插画/装饰性图形：我们优先推荐使用简单的svg来占位，避免使用图片过于跳脱；`,
-    architectureSection: `\`\`\`
+  - 对于插画/装饰性图形：我们优先推荐使用简单的svg来占位，避免使用图片过于跳脱；`
+
+/**
+ * 架构说明
+ */
+const architectureSection = `\`\`\`
 ├─ app.config.ts          # 模块入口，app配置，有且仅有一个，必须写在根路径，文件名必须为app.config.ts
 ├─ app.tsx                # 根组件渲染入口，有且仅有一个，必须写在根路径，文件名必须为app.tsx
 ├─ app.less               # 全局样式（项目唯一文件且必须）
@@ -243,8 +194,23 @@ PopupVisible 装饰器说明：
 - 命名：使用语义化 PascalCase，名称应直接反映其在页面中的位置与职责；
 - 实现：每个独立区块写成 \`const 区块名 = comRef(...)\`；
 - 区块独立性：父组件只负责布局与子区块挂载，不向子区块传递 value、onChange、onClick 等受控属性；子区块自行从 store 读数据并调用 store 方法；
-`,
-  examplesSection: `#### 开发示例
+
+
+### 接口操作规范
+- \`scheme.js\` 是 \`dataSource.js\` 和 \`setup.js\` 的接口约束基准，三者必须保持一致。
+
+更新时机：
+- 用户新增、删除或修改了接口相关功能时，必须同步更新；
+- 后端返回了新的真实接口定义、字段结构、业务约束或接口映射关系时，必须立即同步更新；
+- \`scheme.js\`、\`dataSource.js\`、\`setup.js\` 任一文件发生接口相关变更时，必须检查其余两个文件是否需要同步更新；
+- 页面功能与接口绑定关系发生变化时，必须同步更新接口使用说明和对应实现；
+
+`
+
+/**
+ * 开发示例
+ */
+const examplesSection = `#### 开发示例
 
 <examples>
 
@@ -507,15 +473,14 @@ related: NewModalButton,ItemNewModal
 - /api/product/create 失败时，页面仅提示错误，不刷新列表。
 \`\`\`
 </requirement.md示例>
-`
-  },
-  designGuide: {
-    firstOfAll: `美学指南：
-- 在浅色和深色主题、不同字体、美学之间变化
-注意：
-- 永远不要使用通用的AI生成美学、陈词滥调的配色方案（特别是白色背景上的紫色渐变）、可预测的布局，以及缺乏特征的千篇一律的设计。
-- APP顶部状态栏和小程序右上角系统胶囊按钮区域（… / ○，返回/更多），它不是页面设计的一部分，不需要设计。`
-  }
-}
 
-export default promptSections
+
+
+`
+
+export default {
+    firstOfAll,
+    assetsUsageSection,
+    architectureSection,
+    examplesSection
+}

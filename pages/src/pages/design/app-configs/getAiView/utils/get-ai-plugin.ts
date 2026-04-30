@@ -1,8 +1,8 @@
 import AIPlugin from "@mybricks/plugin-ai";
 import componentRuntime from "./componentRuntime";
-import promptSections from "./promptSections";
+import promptSections from "./prompt";
 import { createOperateApiTool } from "./tools/operate-api";
-import skills from './skills'
+import skills from "./skills";
 
 export default ({ user, key }: any) => {
   const operateApiTool = createOperateApiTool(key);
