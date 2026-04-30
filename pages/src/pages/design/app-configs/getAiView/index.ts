@@ -1,9 +1,5 @@
 import aiViewConfig from './aiview'
 import { getAIResponse } from './utils/get-ai-response';
-// import { mock1Prompts } from './mock';
-import mock2Prompts from './mock/mock2Prompts';
-// import mock1Res from './mock/mock1Res'
-// import mock2Res from './mock/mock2Res'
 // import { aiUtils } from "./utils/get-ai-encrypt-data"
 
 const DEFAULT_MODEL = 'google/gemini-3-flash-preview';

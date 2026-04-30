@@ -5,6 +5,8 @@ const getPageComponentName = (page: string) => {
 const buildAppEntryCode = (appConfig: Taro.AppConfig, ) => {
   const { pages } = appConfig;
 
+  const appMountHandler = appConfig.tabBar?.list?.length > 1 ? 'handleAppMountWithTabbar' : 'handleAppMount'
+
   return `
   import { MyBricksElement } from '@tarojs/components'
   import { appRef, Routes, Route, logger } from 'mybricks'
@@ -14,7 +16,7 @@ const buildAppEntryCode = (appConfig: Taro.AppConfig, ) => {
   }, "")}
 
   import { EMPTY_OBJ } from '@tarojs/shared'
-  import { createRouter, createMemoryHistory, handleAppMountWithTabbar, stacks } from '@tarojs/router'
+  import { createRouter, createMemoryHistory, ${appMountHandler}, stacks } from '@tarojs/router'
   import { window, Current } from '@tarojs/runtime'
   import { createReactApp, reactMeta } from '@tarojs/plugin-framework-react/dist/runtime'
 
@@ -66,7 +68,7 @@ const buildAppEntryCode = (appConfig: Taro.AppConfig, ) => {
 
       var inst = createReactApp(App, React, ReactDOM, config)
       var history = createMemoryHistory(({ initialEntries: [_debugTarget.pageIndex] }))
-      handleAppMountWithTabbar(config, history)
+      ${appMountHandler}(config, history)
       createRouter(history, inst, config, React)
     }, [])
 
@@ -77,11 +79,14 @@ const buildAppEntryCode = (appConfig: Taro.AppConfig, ) => {
           '--taro-tabbar-height': '50px'
         }}
       >
-        <div style={{
-          ..._debugTarget?.style,
-          height: '896px',
-          overflow: 'hidden'
-        }}>
+        <div
+          id="${appConfig.appId}Container"
+          style={{
+            ..._debugTarget?.style,
+            height: '896px',
+            overflow: 'hidden'
+          }}
+        >
           <div id="${appConfig.appId}"></div>
         </div>
       </div>
