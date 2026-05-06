@@ -68,7 +68,7 @@ export function createOperateApiTool(fileId: string) {
         });
 
         const result = await syncState(fileId, summary, filesObj);
-
+        console.log('=======result',result)
         toolContext.emitProgress?.({
           stage: "success",
           message: "接口同步成功",

@@ -477,29 +477,60 @@ related: NewModalButton,ItemNewModal
 
 ### 接口操作规范
 \`\`\` scheme.js  说明
-interface FieldDescriptor {
-  /** 是否必填 */
-  required: boolean;
-  /** 字段数据类型 */
-  type: FieldType;
-  /** 字段描述 */
-  description: string;
-  /** 当 type 为 object 时的子属性定义 */
-  properties?: Record<string, FieldDescriptor>;
-  /** 当 type 为 array 时的数组元素定义 */
-  items?: FieldDescriptor;
-}
+ 
   /**
  * HTTP 请求方法
  */
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 /**
+ * 基础字段描述：仅能用于 errorCode / msg / status / traceId 等简单字段
+ * 不允许包含 properties 和 items
+ */
+interface SimpleFieldDescriptor {
+  required: boolean;
+  type: string;          // "string" | "number" | "boolean"
+  description: string;
+}
+
+/**
+ * 完整字段描述：用于 request 参数、以及 data.properties 内部
+ * 支持对象 (properties) 和数组 (items) 的递归描述
+ */
+interface FieldDescriptor extends SimpleFieldDescriptor {
+  /** 当 type 为 "object" 时，描述子字段 */
+  properties?: Record<string, FieldDescriptor>;
+  /** 当 type 为 "array" 时，描述数组元素类型 */
+  items?: FieldDescriptor;
+}
+
+/**
+ * data 字段的描述符：固定 type 为 "object"，且必须包含 properties
+ */
+interface DataDescriptor {
+  required: true;        // data 必须总是 required
+  type: "object";
+  description: string;
+  properties: Record<string, FieldDescriptor>;
+}
+
+/**
+ * 每个 API 的固定响应结构 —— 强制四个简单字段 + 一个 data
+ */
+interface ApiResponse {
+  errorCode: SimpleFieldDescriptor;  // 业务错误码，0成功，非0失败
+  msg: SimpleFieldDescriptor;
+  status: SimpleFieldDescriptor;    // 业务状态码，默认为 200
+  traceId: SimpleFieldDescriptor;
+  data: DataDescriptor;
+}
+
+/**
  * API 方案条目
  */
 interface SchemeItem {
   /** 方案唯一标识 */
-  id: string;
+  id: number;
   /** 中文名称 */
   cnName: string;
   /** 英文名称 */
@@ -513,7 +544,7 @@ interface SchemeItem {
   /** 请求参数定义（可选） */
   request?: Record<string, FieldDescriptor>;
   /** 真实的响应参数定义（非HTTP响应） */
-  response: Record<string, FieldDescriptor>;
+  response: ApiResponse;
 }
 
 \`\`\`
@@ -540,15 +571,25 @@ const scheme = [
       },
     },
     "response": {
-      "code": {
+      "errorCode": {
         "required": true,
-        "type": "string",
-        "description": "结果标识: sucess 或 error"
+        "type": "number",
+        "description": "结果标识: 0成功 或 1失败"  // 用于区分接口调用成功与否，0表示成功，1表示失败，后续根据业务需要可扩展更多状态码，但必须保证0为成功，非0为失败
       },
-      "message": {
+      status: {
+        "required": true,
+        "type": "number",
+        "description": "状态码 默认：200"  // 注意：这里的 status 是接口返回的业务状态码，不是 HTTP 状态码，HTTP 状态码请通过 axios 的响应状态来判断，不要在 scheme 中定义 HTTP 状态码相关字段
+      },
+      "msg": {
         "required": true,
         "type": "string",
         "description": "提示信息"
+      },
+      traceId: {
+        "required": true,
+        "type": "string",
+        "description": "请求跟踪ID"
       },
       "data": {
         "type": "object",
@@ -673,19 +714,17 @@ import { DataSource } from 'mybricks'
 
 class MyDatasource extends DataSource {
 
-  // 场景一：静态数据，直接 return
-  getConfig() {
-    return { theme: 'dark', version: '1.0.0' }
-  }
+  //公共的请求地址 （可能存在多个）
+  const BASE_URL = 'http://example.com/api'
 
-  // 场景二：真实接口，用 this.axios 发请求（不要自己 import axios）
+  // 真实接口，用 this.axios 发请求（不要自己 import axios）
   // this.axios 是 DataSource 基类内置的独立 axios 实例，与其他组件隔离
   async getUserById({ id }) {
-    return this.axios.get('/getUserById', { params: { id } })
+    return this.axios.get(BASE_URL + '/getUserById', { params: { id } })
   }
 
   async createUser(data) {
-    return this.axios.post('/createUser', data)
+    return this.axios.post(BASE_URL + '/createUser', data)
   }
 }
 
@@ -715,9 +754,11 @@ describe('mock', () => {
   spyOn(dataSource, 'getUserById').mockReturn({
     status: 200,
     data: { 
-      code: 'success',
-      message: '获取用户信息成功',
-      data: { id: 1, name: '张三', age: 18 }
+      errorCode: 0,
+      traceId: '10001',
+      status: 200,
+      msg: '获取用户信息成功',
+      data: { id: 1, name: '张三', age: 18 } 
     },
   })
 })

@@ -58,26 +58,10 @@ function summarizeApiDocs(apiDocs: ApiDocItem[]) {
   }
 
   return [
-    "已获取要接口信息，用于后续 dataSource.js 和 setup.js 的生成，此次作为服务端接口更新，之后不必再次调用\`operate-api\`（接口同步）工具：",
-    ...apiDocs.map((item, index) => {
-      const response = ` \`\`\`js 返回参数shceme定义
-      ${item.response ? JSON.stringify(item.response, null, 2) : ""}
-      \`\`\` `;
-      const request = ` \`\`\`js 请求参数shceme定义
-      ${item.request ? JSON.stringify(item.request, null, 2) : ""}
-      \`\`\` `;
-
-      return [
-        `${index + 1}. ${item.cnName || item.name}`,
-        `- id: ${item.id}`,
-        `- baseUrl: ${item.baseUrl}`,
-        `- name: ${item.name}`,
-        `- method: ${item.method}`,
-        `- path: ${item.path}`,
-        `- request: ${request}`,
-        `- response: ${response}`,
-      ].join("\n");
-    }),
+    "已获取到接口文档，scheme 内容如下：",
+    JSON.stringify(apiDocs, null, 2),
+    "1. 接口返回的 scheme 作为参考标准，只能通过编辑工具写入 scheme.js，内容必须保持完全一致。",
+    "2. 已获取接口信息，可用于后续 dataSource.js 和 setup.js 的生成。",
   ].join("\n\n");
 }
 
