@@ -1,17 +1,16 @@
 # 简介
-
-「Taro Components说明文档」
+Taro 官方基础组件库，提供各类通用基础视图与交互组件。
 
 ## 如何引用
-
-引用Taro组件需要遵循此按需引用的方式
-
-```jsx
+按需引入，直接从 `@tarojs/components` 导入使用：
+```tsx
 import { Input } from '@tarojs/components'
 ```
 
+## 何时使用
+开发 UI 组件时必须使用该组件库
+
 ## 注意事项
 
-- 当有样式需求时，所有组件都可以使用className属性，可以自定义样式。
-
-- `Input` 必须设置 `line-height` css样式，否则内容不会垂直居中
+### ScrollView
+- 页面级滚动 **禁止** 使用 ScrollView 组件，直接使用页面自带滚动能力
