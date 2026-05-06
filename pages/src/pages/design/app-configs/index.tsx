@@ -3,6 +3,7 @@ import { message, Tooltip, Modal, Descriptions } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import moment from "moment";
 import axios from "axios";
+import { getDomainFromPath } from "@/pages/design/app-configs/utils";
 
 // import servicePlugin, {
 //   call as callConnectorHttp,

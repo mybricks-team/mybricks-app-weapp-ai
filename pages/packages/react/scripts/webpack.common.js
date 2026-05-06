@@ -51,8 +51,8 @@ module.exports = {
       '@': path.resolve(__dirname, '../../../src'),
 
       // -- 本地依赖 --
-      '@mybricks/plugin-ai': path.resolve(__dirname, '../../../../../plugin-ai/packages/plugin/src/index'),
-      '@mybricks/sdk-for-app': path.resolve(__dirname, '../../../../../sdk-for-app/src'),
+      "@mybricks/plugin-ai": '/Users/everglowyang/Desktop/hainiu/mybricks/plugin-ai/packages/plugin/src/index.tsx',
+      '@mybricks/sdk-for-app': '/Users/everglowyang/Desktop/hainiu/mybricks/sdk-for-app/src',
 
       // -- taro polyfill --
       '@tarojs/taro$': path.resolve(__dirname, './polyfill/taro/h5.ts'),

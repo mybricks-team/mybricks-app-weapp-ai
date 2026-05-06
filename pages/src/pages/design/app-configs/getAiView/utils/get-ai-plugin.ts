@@ -11,9 +11,7 @@ export default ({ user, key }: any) => {
     user,
     key,
     llm: {
-      providers: [
-        
-      ],
+      providers: [],
     },
     tools: [operateApiTool],
     skills,
