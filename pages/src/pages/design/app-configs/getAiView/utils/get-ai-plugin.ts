@@ -1,16 +1,24 @@
-import AIPlugin, { createRequestAsStream } from '@mybricks/plugin-ai'
-import componentRuntime from './componentRuntime'
-import promptSections from './promptSections'
+import AIPlugin from "@mybricks/plugin-ai";
+import componentRuntime from "./componentRuntime";
+import promptSections from "./prompt";
+import { createOperateApiTool } from "./tools/operate-api";
+import skills from "./skills";
 
 export default ({ user, key }: any) => {
+  const operateApiTool = createOperateApiTool(key);
+
   return AIPlugin({
     user,
     key,
-    onRequest: (params) => {
-      return createRequestAsStream({ useInfra: false })?.(params)
+    llm: {
+      providers: [
+        
+      ],
     },
+    tools: [operateApiTool],
+    skills,
     // ------ taro ------
     componentRuntime,
-    promptSections
-  })
-}
+    promptSections,
+  });
+};
