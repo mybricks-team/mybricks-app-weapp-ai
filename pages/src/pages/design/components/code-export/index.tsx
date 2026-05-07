@@ -4,6 +4,7 @@ import { exportCode, isExportSupported } from './export'
 import { generateCodeStructure } from './structure-generator';
 
 export type ExportJSON = any
+export { exportCode, isExportSupported, generateCodeStructure }
 
 interface CodeExportButtonProps {
   disabled?: boolean
@@ -13,7 +14,7 @@ interface CodeExportButtonProps {
 /**
  * 获取AI组件数据
  */
-function getAiComParams(exportJSON: ExportJSON) {
+export function getAiComParams(exportJSON: ExportJSON) {
   const coms = exportJSON?.scenes?.[0]?.coms || {}
   const comId = Object.keys(coms)[0]
   return coms[comId]?.model
