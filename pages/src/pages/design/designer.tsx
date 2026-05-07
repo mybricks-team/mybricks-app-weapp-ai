@@ -58,8 +58,10 @@ import { useBranch } from './hooks/useBranch'
 import Titlebar from './components/Titlebar'
 import Toolbar2, { type TitlebarRef } from './components/Toolbar'
 import { DesignerTitleBar, DesignerToolBar } from '@mybricks/sdk-for-app/ui'
+import { getAiComParams, exportCode, isExportSupported, generateCodeStructure } from './components/code-export'
 
 const msgSaveKey = 'save'
+const msgExportKey = 'export'
 
 /**
  * @description 获取当前应用setting
@@ -564,6 +566,41 @@ export default function MyDesigner({ appData: originAppData }) {
     },
     [isPreview, ctx]
   )
+
+  const handleExport = useCallback(async () => {
+    const exportJSON = designerRef.current.toJSON()
+    const aiComParams = getAiComParams(exportJSON);
+    if (!aiComParams?.data) {
+      console.error('[导出为代码] 组件数据不存在');
+      return;
+    }
+
+    if (!isExportSupported()) {
+      alert('当前环境不支持导出，请使用 Chrome、Edge 或在 VSCode 中打开');
+      return;
+    }
+
+    message.loading({
+      content: '导出中...',
+      duration: 0,
+      key: msgExportKey,
+    })
+    const files = generateCodeStructure(aiComParams.data);
+    try {
+      await exportCode(files, {
+        folderName: 'App',
+        onProgress: (progress) => {
+          console.log(`[导出进度] ${progress.progress}% - ${progress.currentFile}`);
+        },
+      });
+      message.success('导出代码成功！')
+    } catch (error) {
+      console.error('[导出为代码] 导出失败', error);
+      const errMsg = error?.toString() || '导出代码失败'
+      message.error(errMsg);
+    }
+    message.destroy(msgExportKey)
+  }, [])
 
   const preview = useCallback(() => {
     const json = getToJSON()
@@ -1070,7 +1107,8 @@ export default function MyDesigner({ appData: originAppData }) {
                   moreActions={
                     [
                       {
-                        title: '123'
+                        title: '导出',
+                        onClick: handleExport,
                       }
                     ]
                   }
