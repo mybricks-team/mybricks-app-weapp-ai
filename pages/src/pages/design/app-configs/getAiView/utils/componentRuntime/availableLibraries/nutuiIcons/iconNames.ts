@@ -1,4 +1,4 @@
-export const ICON_NAMES = [
+export const ICON_NAMES = new Set([
   "Add",
   "AddToCart",
   "AddToCartF",
@@ -196,6 +196,4 @@ export const ICON_NAMES = [
   "WarningF",
   "Weixin",
   "Zoom",
-] as const;
-
-export type IconName = typeof ICON_NAMES[number];
+])

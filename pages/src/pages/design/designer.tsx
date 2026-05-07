@@ -229,6 +229,10 @@ export default function MyDesigner({ appData: originAppData }) {
 
           operationList.current = []
 
+          if (name) {
+            ctx.fileName = name
+          }
+
           if (content) {
             setSaveTip(`改动已保存-${moment(new Date()).format('HH:mm')}`)
             toolbarRef.current.setSavedTime(Date.now())
@@ -344,7 +348,7 @@ export default function MyDesigner({ appData: originAppData }) {
   const loadDesigner = useCallback(() => {
     if (designer) {
       const script = document.createElement('script')
-      script.src = 'https://f2.eckwai.com/kos/nlav12333/mybricks/designer-spa/3.9.939.t0/index.min.js'
+      script.src = designer
       document.head.appendChild(script)
       script.onload = () => {
         ; (window as any).mybricks.SPADesigner &&

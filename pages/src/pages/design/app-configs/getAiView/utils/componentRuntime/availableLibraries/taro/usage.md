@@ -1,14 +1,20 @@
 # 简介
 
-- Taro API
+Taro 的 API 包括 Taro 内置提供的 API 以及对小程序的端能力 API 的封装
+
+## 如何引用
+```tsx
+import Taro from '@tarojs/taro'
+
+Taro.showToast({
+  title: '成功',
+  icon: 'success',
+  duration: 2000
+})
+```
+
+## 注意事项
+Taro 已经将各端的api都进行了封装，编码无需关注多端差异，都使用 \`Taro. + API 名称\` 来进行调用
 
 ### defineAppConfig
-在当前环境下，tabBar.list[number].iconPath、tabBar.list[number].selectedIconPath使用网络图片进行配置
-
-注意：底部导航必须使用 defineAppConfig 进行 tabBar.list 的配置，禁止编写自定义 UI 代码实现
-
-### ScrollView
-在当前环境下，页面级滚动禁止使用 ScrollView 组件实现，页面自带了滚动能力
-
-### 根节点
-在当前环境下，根节点的样式必须使用 `height: 100%;`，禁止使用 `height: 100vh;`、`min-height: 100vh;`
+- tabBar.list[number].iconPath、tabBar.list[number].selectedIconPath 支持使用网络图片配置
