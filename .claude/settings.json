@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rg -n --glob '*.{ts,tsx,js,jsx,mts,mjs,cjs}' \"export .*DesignerToolBar|const DesignerToolBar|function DesignerToolBar|class DesignerToolBar|DesignerToolBar\" \"/Users/everglowyang/Desktop/hainiu/mybricks/mybricks-app-weapp-ai\" \"/Users/everglowyang/Desktop/hainiu/mybricks\")",
+      "Bash(node -p \"require.resolve\\('@mybricks/sdk-for-app/ui'\\)\")",
+      "Bash(git -C \"/Users/everglowyang/Desktop/hainiu/mybricks/plugin-ai\" status --short --branch)",
+      "Bash(git -C \"/Users/everglowyang/Desktop/hainiu/mybricks/plugin-ai\" log --oneline --decorate -5)"
+    ]
+  }
+}

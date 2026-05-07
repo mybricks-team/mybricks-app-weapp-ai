@@ -11,7 +11,20 @@ export default ({ user, key }: any) => {
     user,
     key,
     llm: {
-      providers: [],
+      providers: [
+        {
+          format: "openai",
+          providerId: "kimi",
+          baseUrl: "http://ai-api.manateeai.com/v1/chat/completions",
+          apiKey: "sk-8M0pxwcucVOECOFhB470Ea9d09444882A8A955F5863194E8",
+          models: [
+            {
+              id: "kimi-k2.6",
+              name: "Kimi-K2.6",
+            },
+          ],
+        },
+      ],
     },
     tools: [operateApiTool],
     skills,

@@ -1066,6 +1066,13 @@ export default function MyDesigner({ appData: originAppData }) {
                     ctx.operable = operable
                   }}
                   onSave={save}
+                  moreActions={
+                    [
+                      {
+                        title: '123'
+                      }
+                    ]
+                  }
                 />
               )
             }}
