@@ -13,16 +13,4 @@ const tramsformAppLess = (code: string) => {
   return "@import './reset.less';\t\n" + code
 }
 
-/**
- * 暂时解决tabbar图片的报错问题
- * @param code 
- * @returns 
- */
-const tramsformAppConfig = (code: string) => {
-  return code.replace(
-    /(\b(?:iconPath|selectedIconPath)\s*:\s*)(['"])(https?:\/\/[^'"]*)\2/g,
-    '$1$2$2'
-  )
-}
-
-export { tramsformJs, tramsformAppLess, tramsformAppConfig }
+export { tramsformJs, tramsformAppLess }

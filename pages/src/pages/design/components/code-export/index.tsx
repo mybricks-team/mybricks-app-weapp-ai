@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { message, Button } from 'antd'
 import { exportCode, isExportSupported } from './export'
-import { generateCodeStructure } from './structure-generator';
+import { generateExportFiles } from './structure-generator';
 
 export type ExportJSON = any
-export { exportCode, isExportSupported, generateCodeStructure }
+export { exportCode, isExportSupported, generateExportFiles }
 
 interface CodeExportButtonProps {
   disabled?: boolean
@@ -40,7 +40,7 @@ export default function CodeExportButton({ disabled = false, getExportToJSON, }:
     }
 
     setLoading(true)
-    const files = generateCodeStructure(aiComParams.data);
+    const files = await generateExportFiles(aiComParams.data);
     try {
       await exportCode(files, {
         folderName: 'App',

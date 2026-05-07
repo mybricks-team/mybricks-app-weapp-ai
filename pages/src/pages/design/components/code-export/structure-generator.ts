@@ -1,5 +1,6 @@
-import { tramsformJs, tramsformAppLess, tramsformAppConfig } from "./codeTransform";
+import { tramsformJs, tramsformAppLess } from "./codeTransform";
 import taroTemplateJson from './taro-template.json'
+import { localizeRemoteTabBarIcons } from './tabbar-assets'
 
 /**
  * 代码结构生成器
@@ -9,7 +10,7 @@ export interface FileItem {
   /** 文件名（包含相对路径，如 runtime.jsx） */
   fileName: string;
   /** 文件内容 */
-  content: string;
+  content: string | Blob;
 }
 
 export interface ComponentData {
@@ -51,9 +52,7 @@ export function generateCodeStructure(data: ComponentData): FileItem[] {
 
     const suffix = fileName.split('.').pop()
     const jsFiles = ['js', 'jsx', 'ts', 'tsx']
-    if (name.endsWith('app.config.ts')) {
-      code = tramsformAppConfig(code)
-    } else if (jsFiles.includes(suffix)) {
+    if (jsFiles.includes(suffix)) {
       code = tramsformJs(code)
     } else if (name.endsWith('app.less')) {
       code = tramsformAppLess(code)
@@ -71,6 +70,11 @@ export function generateCodeStructure(data: ComponentData): FileItem[] {
   // files.push(entryFile())
 
   return Array.from(files.values());
+}
+
+export async function generateExportFiles(data: ComponentData): Promise<FileItem[]> {
+  const files = generateCodeStructure(data)
+  return localizeRemoteTabBarIcons(files)
 }
 
 const themesFile = (data: ComponentData) => {

@@ -7,7 +7,7 @@ export interface FileItem {
   /** 文件名（包含相对路径，如 runtime.jsx） */
   fileName: string;
   /** 文件内容 */
-  content: string;
+  content: string | Blob;
 }
 
 export interface ExportProgress {

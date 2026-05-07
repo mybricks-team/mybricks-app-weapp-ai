@@ -58,7 +58,7 @@ import { useBranch } from './hooks/useBranch'
 import Titlebar from './components/Titlebar'
 import Toolbar2, { type TitlebarRef } from './components/Toolbar'
 import { DesignerTitleBar, DesignerToolBar } from '@mybricks/sdk-for-app/ui'
-import { getAiComParams, exportCode, isExportSupported, generateCodeStructure } from './components/code-export'
+import { getAiComParams, exportCode, isExportSupported, generateExportFiles } from './components/code-export'
 
 const msgSaveKey = 'save'
 const msgExportKey = 'export'
@@ -585,7 +585,7 @@ export default function MyDesigner({ appData: originAppData }) {
       duration: 0,
       key: msgExportKey,
     })
-    const files = generateCodeStructure(aiComParams.data);
+    const files = await generateExportFiles(aiComParams.data);
     try {
       await exportCode(files, {
         folderName: 'App',
