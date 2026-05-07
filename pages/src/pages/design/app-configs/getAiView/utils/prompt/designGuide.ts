@@ -10,6 +10,7 @@ const firstOfAll  = `美学指南：
 总体布局：
 - 底部导航栏：必须通过 \`app.config.ts\` 配置 tabBar 实现，禁止编码实现；
 - 文案和输入框都分别向中间间距对齐能让内容锁定在一定范围内，让用户眼球顺着间距的视觉流，就能找到所有填写项，从而提高填写效率。
+- 针对输入框（Input）优先同时使用height: number;line-height: number; 来保证垂直方向上中间对齐，以此避免padding-y带来样式多端不一致问题。
 `
 
 export default {

@@ -579,7 +579,7 @@ export default function MyDesigner({ appData: originAppData }) {
       alert('当前环境不支持导出，请使用 Chrome、Edge 或在 VSCode 中打开');
       return;
     }
-
+ 
     message.loading({
       content: '导出中...',
       duration: 0,
@@ -590,6 +590,11 @@ export default function MyDesigner({ appData: originAppData }) {
       await exportCode(files, {
         folderName: 'App',
         onProgress: (progress) => {
+          message.loading({
+            content: `导出中${progress.progress}%`,
+            duration: 0,
+            key: msgExportKey,
+          })
           console.log(`[导出进度] ${progress.progress}% - ${progress.currentFile}`);
         },
       });

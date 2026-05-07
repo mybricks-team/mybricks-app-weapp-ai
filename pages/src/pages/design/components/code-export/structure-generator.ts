@@ -1,4 +1,4 @@
-import { tramsformJs, tramsformAppLess } from "./codeTransform";
+import { tramsformJs, tramsformAppLess, tramsformAppConfig } from "./codeTransform";
 import taroTemplateJson from './taro-template.json'
 
 /**
@@ -51,7 +51,9 @@ export function generateCodeStructure(data: ComponentData): FileItem[] {
 
     const suffix = fileName.split('.').pop()
     const jsFiles = ['js', 'jsx', 'ts', 'tsx']
-    if (jsFiles.includes(suffix)) {
+    if (name.endsWith('app.config.ts')) {
+      code = tramsformAppConfig(code)
+    } else if (jsFiles.includes(suffix)) {
       code = tramsformJs(code)
     } else if (name.endsWith('app.less')) {
       code = tramsformAppLess(code)
