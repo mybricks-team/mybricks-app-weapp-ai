@@ -2,8 +2,7 @@ const EXAMPLE_CODE = `
   \`\`\`tsx file="app.config.ts"
   export default defineAppConfig({
     pages: [
-      'pages/signIn/index',
-      'pages/signUp/index'
+      'pages/login/index'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -22,90 +21,47 @@ const EXAMPLE_CODE = `
   })
   \`\`\`
 
-  \`\`\`tsx file="pages/signIn/index.tsx"
+  \`\`\`tsx file="pages/login/index.tsx"
   import { comRef } from 'mybricks'
-  import { View, Text, Button } from '@tarojs/components'
-  import store from './store'
+  import { View, Text, Input } from '@tarojs/components'
+  import css from './index.less'
 
-  const NewsList = comRef(() => {
+  const Login = comRef(() => {
     return (
-      <View /** datasource:newsListApi */>
-        {store.newsList?.map(news => (
-          <View key={news.id}>
-            <Text>{news.title}</Text>
-            <Text>{news.summary}</Text>
-          </View>
-        ))}
+      <View className={css.login-container}>
+        <Text className={css.title}>Welcome Back</Text>
+        <Input
+          className={css.input}
+          type='text'
+          placeholder='Enter your username'
+        />
+        <Input
+          className={css.input}
+          type='password'
+          placeholder='Enter your password'
+        />
       </View>
     )
   })
 
-  const SignIn = comRef(() => {
-    useEffect(() => {
-      store.fetchNewsList();
-    }, []);
-
-    return (
-      <View>
-        <Text>登录</Text>
-        <NewsList />
-        <Button
-          /** onClick:signIn */
-          /** datasource:signInApi */
-          onClick={() => {
-            store.signIn();
-          }}
-        >
-          登录
-        </Button>
-      </View>
-    )
-  })
-
-  export default SignIn
+  export default Login
   \`\`\`
 
-  \`\`\`tsx file="pages/signIn/index.config.ts"
+  \`\`\`tsx file="pages/login/index.less"
+  .input {
+    width: 100%;
+    height: 48px;
+    line-height: 48px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 0 16px;
+    font-size: 16px;
+  }
+  \`\`\`
+
+  \`\`\`tsx file="pages/login/index.config.ts"
   export default definePageConfig({
-    navigationBarTitleText: 'SignIn'
-  })
-  \`\`\`
-
-  \`\`\`tsx file="pages/signUp/index.tsx"
-  import { comRef } from 'mybricks'
-  import { View, Text, Button, Form } from '@tarojs/components'
-  import store from './store'
-
-  const StepRegisterForm = comRef(({}) => {
-    return (
-      <View>
-        <Form />
-        <Button
-          /** onClick:signUp */
-          /** datasource:signUpApi */
-          onClick={() => {
-            store.signUp();
-          }}
-        >注册</Button>
-      </View>
-    )
-  })
-
-  const SignUp = comRef(() => {
-    return (
-      <View>
-        <Text>注册</Text>
-        <StepRegisterForm />
-      </View>
-    )
-  })
-
-  export default SignUp
-  \`\`\`
-
-  \`\`\`tsx file="pages/signUp/index.config.ts"
-  export default definePageConfig({
-    navigationBarTitleText: 'SignUp'
+    navigationBarTitleText: 'Login'
   })
   \`\`\`
 `
@@ -131,7 +87,6 @@ const promptSections = {
   - 响应式：保证合理统一的间距，以及支持宽度变化自适应的代码；
   - 画布宽度：414px；
   - 组件的事件注释：任何事件都必须包含注释「/** 事件名:事件key */」注释；
-  - 组件的接口使用注释：JSX 标签内调用或使用接口数据必须包含注释「/** datasource:唯一key */」，这个 key 必须保证全局唯一，即使同一个接口会被不同组件调用或使用；函数体内和 hooks 内的接口调用和读取不需要写注释，直接在 README.md 里使用 root 作为唯一 key 描述即可；
 - 拆分逻辑
   - 精准识别到底是页面还是弹窗，对其进行拆分，如果是页面，需要在\`app.config.ts\`中的pages进行配置，如果是tab页，需要同时在\`app.config.ts\`中的pages以及tabBar.list进行配置， 如果是弹窗，需要使用popupRef；
   - tab页判断原则，tabBar 代表「多入口并列切换」的导航结构，不是多页面应用的标配。判断标准：
@@ -209,9 +164,6 @@ const promptSections = {
 11. 各类动效、动画等，尽量使用 css3 的方式在 less 中实现，不要为此引入任何的额外类库；
 12. 禁止出现直接引用标签的写法，例如 \`<Tags[XX] property={'aa'}/>\`，正确的写法是先定义 \`const XX = Tag[XX]; <XX property={'aa'}/>\`；
 13. 所有列表中的组件，必须通过 key 属性做唯一标识，不要使用 index 作为 key；
-14. 如果 JSX 标签的事件内调用了接口，那么标签内必须包含注释「/** datasource:唯一key */」，这个 key 必须保证全局唯一
-15. 如果 JSX 标签内使用了接口数据，那么标签内必须包含注释「/** datasource:唯一key */」，这个 key 必须保证全局唯一
-16. 函数体内（如 useEffect、普通函数）的接口调用和读取不需要写注释，在 README.md 里对应组件的datasource那使用 root 作为唯一 key 描述即可
 
 保留字段（禁止通过 props 传递）：
 - \`_env\`：环境变量，\`_env.mode\` 表示运行环境（design | runtime）；
@@ -332,8 +284,8 @@ PopupVisible 装饰器说明：
 根据当前应用的 tsx 源码，生成或更新对应的 README.md 说明文档
 更新时机：
 - 必须更新（强约束）：目录下不存在 README.md；或现有文档内容与上述规范不符；或需求明确要求更新文档；
-- 建议更新（结构或内容变化）：在 tsx 中新增、删除或重命名了 appRef/comRef 节点，或通过 \`app.config.ts\` 中 pages 注册的页面发生变化；export default 的根节点类型或子节点类型组合发生变化导致标题层级需调整；JSX 中新增、删除或修改了带 /** onXXX:事件名 */ 注释的事件；JSX 中新增、删除或修改了 /** datasource:唯一key */ 注释；某节点的 UI 结构、交互或业务含义发生明显变化；
-- 无需更新：tsx、store.ts 未被修改，且现有 README.md 已正确反映当前源码的节点结构、事件、接口使用情况与说明；仅修改了 less 等与节点行为无关的文件；
+- 建议更新（结构或内容变化）：在 tsx 中新增、删除或重命名了 appRef/comRef 节点，或通过 \`app.config.ts\` 中 pages 注册的页面发生变化；export default 的根节点类型或子节点类型组合发生变化导致标题层级需调整；JSX 中新增、删除或修改了带 /** onXXX:事件名 */ 注释的事件；某节点的 UI 结构、交互或业务含义发生明显变化；
+- 无需更新：tsx、store.ts 未被修改，且现有 README.md 已正确反映当前源码的节点结构、事件与说明；仅修改了 less 等与节点行为无关的文件；
 <README.md 文档编写规范>
   <节点>
   按「在 JSX 中依赖顺序」依次写出，层级用标题级别表示。
@@ -384,15 +336,6 @@ PopupVisible 装饰器说明：
         - 流程图须真实完整：严格依据事件处理函数内的代码逻辑，以及所调用的 store 方法内部实现来绘制，不省略、不捏造。
         - 分支流程必须完整表达：代码中的 if/else、三元判断、early return、请求成功/失败等所有分支，都必须在流程图中用条件节点 {} 和 |分支标注| 画出；每个分支（如「通过」「不通过」「成功」「失败」）及其后续步骤都须独立延伸，不得只写主流程而省略条件分支。
     3. 无事件可省略 events
-  - datasource：该组件内所使用到的接口列表
-    1. 从源码识别：JSX 块注释如 /** datasource:唯一key */（仅针对 JSX 标签内的接口调用或数据使用）
-    2. 对于函数体内（如 useEffect、普通函数内）的接口调用或读取，统一使用 root 作为唯一 key，在对应节点下汇总描述
-    3. 每条接口用结构化格式描述，包含以下字段：
-      - 唯一key
-        - api - 对应datasource内的真实方法名定义
-          - type: call(调用接口) | use(使用接口数据)
-          - desc: 该元素使用此接口的具体意图，每处使用独立描述
-    4. 没有使用接口可省略 datasource
   </节点说明>
 </README.md 文档编写规范>
 
@@ -400,79 +343,24 @@ PopupVisible 装饰器说明：
 如果应用源代码如下
 ${EXAMPLE_CODE}
 
-可以看到有一个appRef、四个comRef（其中两个为页面节点），所以文档包含一个app节点、两个页面节点、两个组件节点。
+可以看到有一个appRef，一个comRef（其中一个为页面节点），所以文档包含一个app节点、一个页面节点。
 
 \`\`\`md file="README.md"
 # default
 
-- title: 登录/注册应用入口
-- summary: 应用根节点，通过路由提供登录页与注册页的切换与展示。
+- title: 登录
+- summary: 登录应用
 - type: app
 
 ---
 
-## SignIn
+## Login
 
 - title: 登录页
-- summary: 用户登录入口页，提供登录按钮并触发 signIn 完成登录。
-- type: page
-- events:
-  - signIn
-    - title: 登录
-    - mermaid: flowchart LR; A["校验登录参数"] --> B{"参数是否有效"} -->|有效| C["设置loading状态"] --> D["请求登录接口"] --> E{"请求是否成功"} -->|成功| F["更新用户状态"] --> G["取消loading状态"]; E -->|失败| H["提示错误信息"] --> G; B -->|无效| I["提示参数错误"]
-- datasource:
-  - signInApi
-    - signUp
-      - type: call
-      - desc: 点击登录按钮调用登录接口
-
-（SignIn 是通过 \`app.config.ts\` 中 pages 注册的页面，因此 type 为 page）
-
----
-
-### NewsList
-
-- title: 新闻列表区块
-- summary: 展示官网最新新闻列表，使用 getNewsList 接口返回的数据。
-- type: com
-- datasource:
-  - newsListApi
-    - getNewsList
-      - type: use
-      - desc: 展示新闻标题和摘要列表
-  - root
-    - getNewsList
-      - type: call
-      - desc: 组件初始化时调用接口获取新闻列表数据
-
----
-
-## SignUp
-
-- title: 注册页
-- summary: 用户注册入口页，内嵌注册表单组件完成填写与提交。
+- summary: 用户登录入口页
 - type: page
 
-（SignUp 是通过 \`app.config.ts\` 中 pages 注册的页面，因此 type 为 page）
-
----
-
-### StepRegisterForm
-
-- title: 注册表单区块
-- summary: 注册表单容器，包含表单与注册按钮，提交时触发 signUp。
-- type: com
-- events:
-  - signUp
-    - title: 注册
-    - mermaid: flowchart LR; A["校验表单参数"] --> B{"参数是否有效"} -->|有效| C["设置loading状态"] --> D["请求注册接口"] --> E{"请求是否成功"} -->|成功| F["跳转登录页"] --> G["取消loading状态"]; E -->|失败| H["提示错误信息"] --> G; B -->|无效| I["提示参数错误"]
-- datasource:
-  - signUpApi
-    - signUp
-      - type: call
-      - desc: 点击注册按钮调用注册接口
-
-\`\`\`
+（Login 是通过 \`app.config.ts\` 中 pages 注册的页面，因此 type 为 page）
 </基于 tsx 的README.md示例>
 `,
     requirementGuide: `<requirement.md 文档编写规范>
