@@ -56,7 +56,7 @@ interface SchemeItem {
   id: number;
   /** 中文名称 */
   cnName: string;
-  /** 英文名称 */
+  /** 英文名称（写法：snake_case） */
   name: string;
   /** 基础 URL */
   baseUrl: string;
@@ -75,9 +75,9 @@ interface SchemeItem {
 \`\`\`js scheme.js 文件示例
 const scheme = [
   {
-    "id": "user.info.scheme",
-    "cnName": "获取用户信息scheme",
-    "name": "GetUserInfoScheme",
+    "id": 1,
+    "cnName": "获取用户信息",
+    "name": "get_user_info",
     "baseUrl": "https://api.example.com",
     "method": "GET",
     "path": "/api/user/info",
@@ -141,9 +141,9 @@ const scheme = [
     }
   },
   {
-    "id": "product.list.scheme",
-    "cnName": "获取商品列表scheme",
-    "name": "GetProductListScheme",
+    "id": 2,
+    "cnName": "获取商品列表",
+    "name": "get_product_list",
     "baseUrl": "https://api.example.com",
     "method": "GET",
     "path": "/api/product/list",
