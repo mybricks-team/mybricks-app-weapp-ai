@@ -58,7 +58,7 @@ import { useBranch } from './hooks/useBranch'
 import Titlebar from './components/Titlebar'
 import Toolbar2, { type TitlebarRef } from './components/Toolbar'
 import { DesignerTitleBar, DesignerToolBar } from '@mybricks/sdk-for-app/ui'
-import { getAiComParams, exportCode, isExportSupported, generateExportFiles } from './components/code-export'
+import { getAiComParams, exportCode, generateExportFiles } from './components/code-export'
 
 const msgSaveKey = 'save'
 const msgExportKey = 'export'
@@ -573,11 +573,6 @@ export default function MyDesigner({ appData: originAppData }) {
       return;
     }
 
-    if (!isExportSupported()) {
-      alert('当前环境不支持导出，请使用 Chrome、Edge 或在 VSCode 中打开');
-      return;
-    }
- 
     message.loading({
       content: '导出中...',
       duration: 0,

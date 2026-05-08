@@ -1,3 +1,4 @@
+import JSZip from 'jszip';
 
 /**
  * 代码结构生成器
@@ -28,25 +29,33 @@ export interface ExportOptions {
   onProgress?: (progress: ExportProgress) => void;
 }
 
+export type ExportMode = 'directory' | 'zip';
+
 export async function exportCode(
   files: FileItem[],
   options: ExportOptions = {}
 ) {
-  const { folderName = 'App', onProgress } = options;
+  const mode = getExportMode();
 
-  // 检查浏览器是否支持文件系统 API
-  if (!('showDirectoryPicker' in window)) {
-    throw new Error(
-      '当前浏览器不支持文件系统 API，请使用 Chrome、Edge 或其他支持的浏览器'
-    );
+  if (mode === 'directory') {
+    return exportToDirectory(files, options);
   }
+
+  return exportToZip(files, options);
+}
+
+async function exportToDirectory(
+  files: FileItem[],
+  options: ExportOptions = {}
+) {
+  const { folderName = 'App', onProgress } = options;
 
   // 使用浏览器文件系统 API 导出
   console.log('[代码导出] 使用浏览器文件系统 API');
 
   try {
     // 1. 请求用户选择目录
-    const directoryHandle = await (window as any).showDirectoryPicker({
+    const directoryHandle = await window.showDirectoryPicker({
       mode: 'readwrite',
       startIn: 'downloads',
     });
@@ -64,7 +73,6 @@ export async function exportCode(
       await writeFile(componentDirHandle, file);
       completedFiles++;
 
-      // 触发进度回调
       onProgress?.({
         progress: Math.round((completedFiles / totalFiles) * 100),
         currentFile: file.fileName,
@@ -75,14 +83,49 @@ export async function exportCode(
 
     console.log(`[浏览器导出] 成功导出 ${totalFiles} 个文件到: ${folderName}`);
   } catch (error) {
-    // 用户取消选择
     if ((error as any).name === 'AbortError') {
       console.log('[浏览器导出] 用户取消导出');
       throw new Error('用户取消导出');
     }
     throw error;
   }
-  return undefined;
+}
+
+async function exportToZip(
+  files: FileItem[],
+  options: ExportOptions = {}
+) {
+  const { folderName = 'App', onProgress } = options;
+  const zip = new JSZip();
+  const totalFiles = files.length;
+  let completedFiles = 0;
+
+  for (const file of files) {
+    zip.file(`${folderName}/${file.fileName}`, file.content);
+    completedFiles++;
+
+    onProgress?.({
+      progress: Math.round((completedFiles / totalFiles) * 100),
+      currentFile: file.fileName,
+      totalFiles,
+      completedFiles,
+    });
+  }
+
+  const blob = await zip.generateAsync({ type: 'blob' });
+  const url = URL.createObjectURL(blob);
+
+  try {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${folderName}.zip`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    console.log(`[浏览器导出] 已下载 zip 包: ${folderName}.zip`);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
 }
 
 /**
@@ -118,13 +161,10 @@ async function writeFile(
   await writable.close();
 }
 
-/**
- * 检查是否支持导出
- */
-export function isExportSupported(): boolean {
-  // VSCode 环境或浏览器支持文件系统 API
-  return (
-    typeof (window as any).exportCodeToVSCode === 'function' ||
-    'showDirectoryPicker' in window
-  );
+function getExportMode(): ExportMode {
+  if (window.isSecureContext && typeof window.showDirectoryPicker === 'function') {
+    return 'directory';
+  }
+
+  return 'zip';
 }

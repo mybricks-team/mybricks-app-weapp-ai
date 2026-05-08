@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { message, Button } from 'antd'
-import { exportCode, isExportSupported } from './export'
+import { exportCode } from './export'
 import { generateExportFiles } from './structure-generator';
 
 export type ExportJSON = any
-export { exportCode, isExportSupported, generateExportFiles }
+export { exportCode, generateExportFiles }
 
 interface CodeExportButtonProps {
   disabled?: boolean
@@ -31,11 +31,6 @@ export default function CodeExportButton({ disabled = false, getExportToJSON, }:
     const aiComParams = getAiComParams(exportJSON);
     if (!aiComParams?.data) {
       console.error('[导出为代码] 组件数据不存在');
-      return;
-    }
-
-    if (!isExportSupported()) {
-      alert('当前环境不支持导出，请使用 Chrome、Edge 或在 VSCode 中打开');
       return;
     }
 
