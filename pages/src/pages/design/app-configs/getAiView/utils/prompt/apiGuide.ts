@@ -214,6 +214,7 @@ const scheme = [
     }
   }
 ]
+export default scheme
 \`\`\`
 
 ### 数据源使用

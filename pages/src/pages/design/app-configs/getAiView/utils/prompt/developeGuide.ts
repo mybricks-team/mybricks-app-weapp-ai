@@ -150,6 +150,7 @@ PopupVisible 装饰器说明：
 - 除 makeAutoObservable 调用外，任何数据初始化动作都不允许写在 constructor 内；
 - 禁止在 React 函数组件内直接调用 store 的数据初始化方法（如 store.init()、store.fetchData() 等），这会在每次渲染时重复执行，极易导致死循环；如需初始化，必须放在 useEffect 内执行；
 - store.ts 是纯 TypeScript 文件，禁止出现任何 JSX 语法（例如 <Icon />、<div> 等标签），也禁止从任何 UI 组件库引入 JSX 组件并作为字段值存储；
+- store.ts 是 setup.ts和 dataSource.ts的逻辑中转站，编排逻辑时要考虑两者的关系，避免逻辑不一致导致的非必要重新编排
 
 #### 日志规范
 项目中必须使用 mybricks 提供的 \`logger\` 工具打印日志，禁止使用 console.log / console.warn / console.error 等原生方法。
