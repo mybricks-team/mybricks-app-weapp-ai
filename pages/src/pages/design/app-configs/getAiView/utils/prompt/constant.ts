@@ -15,6 +15,7 @@ export const EXAMPLE_CODE = `
 
   \`\`\`tsx file="app.tsx"
   import { appRef } from 'mybricks'
+  import './app.less'
     
   export default appRef(({ children }) => {
     return children
