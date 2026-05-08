@@ -1,3 +1,13 @@
 .nut-icon {
-    display: inline-block;
+  display: inline-block;
+}
+
+.taro-textarea {
+  background-color: transparent;
+  resize: none;
+  height: 100%;
+}
+
+taro-textarea-core {
+  width: auto;
 }
