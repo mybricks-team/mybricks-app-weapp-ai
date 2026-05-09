@@ -100,11 +100,10 @@ const promptSections = {
   assetsUsageSection: `- 对于图标：为了保证视觉的统一与专业性，我们的共识是统一使用图标组件，当图标组件无法表达对应的语义时考虑使用图片替代。目前提供的图标库如下
   - @nutui/icons-react-taro
 - 对于图片：图片是传递信息与氛围的关键。我们建议根据其用途选择合适的来源：
-  - 占位图片：例如配置一个橙色背景带白色hello文字的色块占位图片，\`https://placehold.co/600x400/orange/ffffff?text=hello\`，注意 text 只能使用英文字符；
-  - 写实图片：例如配置一个高质量的写实图片比如摄影、人文等，\`https://ai.mybricks.world/image-search?term=searchWord&w=20&h=20\`；
+  - https://ai.mybricks.world/image-search?term=searchWord&w=20&h=20，可以配置一个高质量的写实图片（比如摄影、人文等）；
   具体来说
-  - 对于各类图片，例如背景图、轮播图等：我们建议使用高质量的写实图片；
-  - 对于Logo：我们建议使用色块占位图片；
+  - 对于海报/写实/商品/图片等：我们建议使用高质量的写实图片；
+  - 对于Logo：我们建议使用色块+文本占位；
   - 对于插画/装饰性图形：我们优先推荐使用简单的svg来占位，避免使用图片过于跳脱；`,
     /**
      * 文件结构描述
