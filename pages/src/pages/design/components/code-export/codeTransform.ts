@@ -38,9 +38,26 @@ const tramsformJs = (code: string) => {
   return resultCode;
 }
 
-const tramsformAppLess = (code: string) => {
+const tramsformAppJs = (code: string) => {
   // 注入 reset.less
-  return "@import './reset.less';\n" + code
+  return insertImportAfterLastImport(code, "import './reset.less'")
 }
 
-export { tramsformJs, tramsformAppLess }
+function insertImportAfterLastImport(code: string, newImport: string) {
+  const lines = code.split('\n');
+  console.log('=====',code,lines)
+  let lastImportIndex = -1;
+  // 从后向前找最后一个以 'import ' 开头的行
+  for (let i = lines.length - 1; i >= 0; i--) {
+    if (lines[i].trim().startsWith('import ')) {
+      lastImportIndex = i;
+      break;
+    }
+  }
+  if (lastImportIndex !== -1) {
+    lines.splice(lastImportIndex + 1, 0, newImport);
+  }
+  return lines.join('\n');
+}
+
+export { tramsformJs, tramsformAppJs }

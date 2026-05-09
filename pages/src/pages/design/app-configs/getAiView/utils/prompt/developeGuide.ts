@@ -50,7 +50,7 @@ const assetsUsageSection = `- 对于图标：为了保证视觉的统一与专�
 const architectureSection = `\`\`\`
 ├─ app.config.ts          # 模块入口，app配置，有且仅有一个，必须写在根路径，文件名必须为app.config.ts
 ├─ app.tsx                # 根组件渲染入口，有且仅有一个，必须写在根路径，文件名必须为app.tsx
-├─ app.less               # 全局样式（项目唯一文件且必须）
+├─ app.less               # 全局样式（可选）
 ├─ store.ts               # 全局 store（可选）
 ├─ scheme.js    # 接口 scheme （项目唯一文件且必须，而且在dataSource.js和 setup.js之前写入）
 ├─ dataSource.js          # 真实接口（项目唯一文件且必须）
@@ -97,6 +97,7 @@ const architectureSection = `\`\`\`
 11. 各类动效、动画等，尽量使用 css3 的方式在 less 中实现，不要为此引入任何的额外类库；
 12. 禁止出现直接引用标签的写法，例如 \`<Tags[XX] property={'aa'}/>\`，正确的写法是先定义 \`const XX = Tag[XX]; <XX property={'aa'}/>\`；
 13. 所有列表中的组件，必须通过 key 属性做唯一标识，不要使用 index 作为 key；
+14. 项目已启用 CSS Modules，所有样式必须使用 import css from '*.less' 的方式，并通过 css.className 引用
 
 保留字段（禁止通过 props 传递）：
 - \`_env\`：环境变量，\`_env.mode\` 表示运行环境（design | runtime）；

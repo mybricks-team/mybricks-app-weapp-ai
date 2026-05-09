@@ -1,4 +1,4 @@
-import { tramsformJs, tramsformAppLess } from "./codeTransform";
+import { tramsformJs, tramsformAppJs } from "./codeTransform";
 import taroTemplateJson from './taro-template.json'
 import { localizeRemoteTabBarIcons } from './tabbar-assets'
 
@@ -54,11 +54,13 @@ export function generateCodeStructure(data: ComponentData): FileItem[] {
     const jsFiles = ['js', 'jsx', 'ts', 'tsx']
     if (jsFiles.includes(suffix)) {
       code = tramsformJs(code)
-    } else if (name.endsWith('app.less')) {
-      code = tramsformAppLess(code)
     } else if (suffix === 'less') {
       name = name.replace('.less', '.module.less')
     }
+
+    if (name.endsWith('app.tsx')) {
+      code = tramsformAppJs(code)
+    } 
 
     files.set(`src/${name}`, {
       fileName: `src/${name}`,
