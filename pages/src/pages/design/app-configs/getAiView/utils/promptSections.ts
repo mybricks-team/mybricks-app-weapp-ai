@@ -2,7 +2,8 @@ const EXAMPLE_CODE = `
   \`\`\`tsx file="app.config.ts"
   export default defineAppConfig({
     pages: [
-      'pages/login/index'
+      'pages/signin/index',
+      'pages/signup/index'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -21,47 +22,76 @@ const EXAMPLE_CODE = `
   })
   \`\`\`
 
-  \`\`\`tsx file="pages/login/index.tsx"
+  \`\`\`tsx file="pages/signin/index.tsx"
   import { comRef } from 'mybricks'
-  import { View, Text, Input } from '@tarojs/components'
+  import { View, Text, Button } from '@tarojs/components'
   import css from './index.less'
 
-  const Login = comRef(() => {
+  const SignIn = comRef(({}) => {
     return (
-      <View className={css.login-container}>
-        <Text className={css.title}>Welcome Back</Text>
-        <Input
-          className={css.input}
-          type='text'
-          placeholder='Enter your username'
-        />
-        <Input
-          className={css.input}
-          type='password'
-          placeholder='Enter your password'
-        />
+      <View className={css.container}>
+        <Text className={css.title}>登录</Text>
+        <View className={css.loginInfo} /** store:loginInfo */>
+          {store.welcomeMsg} - {store.userType}
+        </View>
+        <Button
+          className={css.loginBtn}
+          /** onClick:signIn */
+          /** datasource:clickToSignIn */
+          onClick={() => {
+            store.signIn();
+          }}
+        >
+          登录
+        </Button>
       </View>
     )
   })
 
-  export default Login
+  export default SignIn
   \`\`\`
 
-  \`\`\`tsx file="pages/login/index.less"
-  .input {
-    width: 100%;
-    height: 48px;
-    line-height: 48px;
-    background: #fff;
-    border-radius: 12px;
-    padding: 0 16px;
-    font-size: 16px;
-  }
-  \`\`\`
-
-  \`\`\`tsx file="pages/login/index.config.ts"
+  \`\`\`tsx file="pages/signin/index.config.ts"
   export default definePageConfig({
-    navigationBarTitleText: 'Login'
+    navigationBarTitleText: '登录'
+  })
+  \`\`\`
+
+  \`\`\`tsx file="pages/signup/index.tsx"
+  import { comRef } from 'mybricks'
+  import { View, Text, Button } from '@tarojs/components'
+  import css from './index.less'
+
+  const StepRegisterForm = comRef(({}) => {
+    return (
+      <View className={css.form}>
+        <Button
+          className={css.registerBtn}
+          /** onClick:signUp */
+          /** datasource:clickToSignUp */
+          onClick={() => {
+            store.signUp();
+          }}
+        >注册</Button>
+      </View>
+    )
+  })
+
+  const SignUp = comRef(() => {
+    return (
+      <View className={css.container}>
+        <Text className={css.title}>注册</Text>
+        <StepRegisterForm />
+      </View>
+    )
+  })
+
+  export default SignUp
+  \`\`\`
+
+  \`\`\`tsx file="pages/signup/index.config.ts"
+  export default definePageConfig({
+    navigationBarTitleText: '注册'
   })
   \`\`\`
 `
@@ -163,6 +193,46 @@ const promptSections = {
 11. 各类动效、动画等，尽量使用 css3 的方式在 less 中实现，不要为此引入任何的额外类库；
 12. 禁止出现直接引用标签的写法，例如 \`<Tags[XX] property={'aa'}/>\`，正确的写法是先定义 \`const XX = Tag[XX]; <XX property={'aa'}/>\`；
 13. 所有列表中的组件，必须通过 key 属性做唯一标识，不要使用 index 作为 key；
+14. 元素或组件接口调用相关注释：
+  - 说明：调用接口即调用 datasource 提供的api
+  - 判断依据：
+    1. 当 JSX 标签内事件直接或间接调用 datasource 提供的api时，添加注释
+  - 注释格式：「/** datasource:唯一key */」，key必须全局唯一
+  - 示例：\`<Button /** datasource:clickToLogin */ onClick={() => store.login()}>登录</Button>\`
+  - 注意：
+    1. 当接口调用在函数体或 React hooks（如 useEffect）内时，禁止编写注释
+15. 元素或组件消费、使用 store 数据相关注释：
+  - 判断依据：
+    1. 当 JSX 内使用 store 数据时，添加注释
+  - 注释格式：「/** store:唯一key */」，key必须全局唯一
+  - 示例：
+    1. 简单引用
+    \`\`\`jsx
+    <View /** store:userName */>{store.user.name}</View>
+    \`\`\`
+
+    2. 间接引用或消费一个对象下的多个深层字段时
+    \`\`\`jsx
+    <View /** store:userCard */>
+      <View>{store.user.name}</View>
+      <View>{store.user.age}</View>
+    </View>
+    \`\`\`
+    \`\`\`jsx
+    const { user } = store
+    <View /** store:userCard */>
+      <View>{user.name}</View>
+      <View>{user.age}</View>
+    </View>
+    \`\`\`
+
+    3. 数组遍历渲染
+    \`\`\`
+    <View /** store:userList */>{store.users.map(user => <View key={user.id}>{user.name}</View>)}</View>
+    \`\`\`
+  - 注意：
+    1. 当没有合适的JSX标签编写注释时，通常可能是外层使用空标签\`<>\`或\`<Fragment>\`，此时不需要写注释
+    2. 当外层容器和内部子元素消费同一个store字段时，应将注释写在最外层容器上，避免重复注释
 
 保留字段（禁止通过 props 传递）：
 - \`_env\`：环境变量，\`_env.mode\` 表示运行环境（design | runtime）；
@@ -282,7 +352,7 @@ PopupVisible 装饰器说明：
 ### README.md
 根据当前应用的 tsx 源码，生成或更新对应的 README.md 说明文档
 更新时机：
-- 必须更新（强约束）：目录下不存在 README.md；或现有文档内容与上述规范不符；或需求明确要求更新文档；
+- 必须更新（强约束）：目录下不存在 README.md；或当前文档内容与「文档编写规范」不符；或需求明确要求更新文档；
 - 建议更新（结构或内容变化）：在 tsx 中新增、删除或重命名了 appRef/comRef 节点，或通过 \`app.config.ts\` 中 pages 注册的页面发生变化；export default 的根节点类型或子节点类型组合发生变化导致标题层级需调整；JSX 中新增、删除或修改了带 /** onXXX:事件名 */ 注释的事件；某节点的 UI 结构、交互或业务含义发生明显变化；
 - 无需更新：tsx、store.ts 未被修改，且现有 README.md 已正确反映当前源码的节点结构、事件与说明；仅修改了 less 等与节点行为无关的文件；
 <README.md 文档编写规范>
@@ -335,31 +405,94 @@ PopupVisible 装饰器说明：
         - 流程图须真实完整：严格依据事件处理函数内的代码逻辑，以及所调用的 store 方法内部实现来绘制，不省略、不捏造。
         - 分支流程必须完整表达：代码中的 if/else、三元判断、early return、请求成功/失败等所有分支，都必须在流程图中用条件节点 {} 和 |分支标注| 画出；每个分支（如「通过」「不通过」「成功」「失败」）及其后续步骤都须独立延伸，不得只写主流程而省略条件分支。
     3. 无事件可省略 events
+  - datasource：该组件内调用的接口列表（找最近的组件，而不是页面）
+    1. 从源码识别：JSX 块注释如 /** datasource:唯一key */
+    2. 每条接口调用用结构化格式描述，包含以下字段：
+      - 唯一key
+        - api（真实方法名，对应 datasource 中的方法）
+          - desc: 用途说明
+    3. 特殊情况：当接口调用在函数体或 React hooks（如 useEffect）内时，使用「root」作为唯一key
+    4. 无接口调用可省略 datasource
+  - store：该组件内消费的store数据列表（找最近的组件，而不是页面）
+    1. 从源码识别：JSX块注释如 /** store:唯一key */
+    2. 每个唯一key下是一个数组，支持描述多个字段的消费（可能来自不同store或同一store的不同字段）：
+      - 唯一key
+        - 对应store文件的绝对路径
+          - field: 对应store的属性路径
+          - desc: 用途说明
+        - 对应store文件的绝对路径
+          - field: ...
+          - desc: ...
+    3. 特殊情况：当容器本身即为组件时（如 Fragment），使用「root」作为唯一key，path/field 正常填写
+    4. 每一个组件，如果在代码层面没有读取 store 的字段来做ui以及视觉的渲染，禁止编写store信息；即使子组件使用了，也不应该使用root，以实际代码情况为准；
+    5. 无store数据消费可省略 store
   </节点说明>
 </README.md 文档编写规范>
 
 <基于 tsx 的README.md示例>
-如果应用源代码如下
+如果某一个组件源代码如下，可以看到有有四个comRef（其中两个为页面节点）、一个appRef，所以文档包含一个app节点、两个页面节点、一个组件节点。
 ${EXAMPLE_CODE}
-
-可以看到有一个appRef，一个comRef（其中一个为页面节点），所以文档包含一个app节点、一个页面节点。
 
 \`\`\`md file="README.md"
 # default
 
-- title: 登录
-- summary: 登录应用
+- title: 登录/注册应用入口
+- summary: 应用根节点，通过路由提供登录页与注册页的切换与展示。
 - type: app
 
 ---
 
-## Login
+## SignIn
 
 - title: 登录页
-- summary: 用户登录入口页
+- summary: 用户登录入口页，提供登录按钮并触发 signIn 完成登录。
+- type: page
+- events:
+  - signIn
+    - title: 登录
+    - mermaid: flowchart LR; A["校验登录参数"] --> B{"参数是否有效"} -->|有效| C["设置loading状态"] --> D["请求登录接口"] --> E{"请求是否成功"} -->|成功| F["更新用户状态"] --> G["取消loading状态"]; E -->|失败| H["提示错误信息"] --> G; B -->|无效| I["提示参数错误"]
+- datasource:
+  - clickToSignIn
+    - signIn
+      - desc: 点击登录按钮调用登录接口
+- store:
+  - loginInfo
+    - /store.js
+      - field: welcomeMsg
+      - desc: 展示欢迎语
+    - /store.js
+      - field: userType
+      - desc: 展示用户类型
+
+（SignIn 是通过 \`app.config.ts\` 中 pages 注册的页面，因此 type 为 page）
+
+---
+
+## SignUp
+
+- title: 注册页
+- summary: 用户注册入口页，内嵌注册表单组件完成填写与提交。
 - type: page
 
-（Login 是通过 \`app.config.ts\` 中 pages 注册的页面，因此 type 为 page）
+（SignUp 是通过 \`app.config.ts\` 中 pages 注册的页面，因此 type 为 page）
+
+---
+
+### StepRegisterForm
+
+- title: 注册表单区块
+- summary: 注册表单容器，包含表单与注册按钮，提交时触发 signUp。
+- type: com
+- events:
+  - signUp
+    - title: 注册
+    - mermaid: flowchart LR; A["校验表单参数"] --> B{"参数是否有效"} -->|有效| C["设置loading状态"] --> D["请求注册接口"] --> E{"请求是否成功"} -->|成功| F["跳转登录页"] --> G["取消loading状态"]; E -->|失败| H["提示错误信息"] --> G; B -->|无效| I["提示参数错误"]
+- datasource:
+  - clickToSignUp
+    - signUp
+      - desc: 点击注册按钮调用注册接口
+
+\`\`\`
 </基于 tsx 的README.md示例>
 `,
     requirementGuide: `<requirement.md 文档编写规范>
