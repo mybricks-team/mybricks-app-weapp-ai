@@ -15,7 +15,7 @@ export default ({ user, key }: any) => {
         {
           format: "openai",
           providerId: "kimi",
-          baseUrl: "http://ai-api.manateeai.com/v1/chat/completions",
+          baseUrl: "https://new-api.manateeai.com/v1/chat/completions",
           apiKey: "sk-8M0pxwcucVOECOFhB470Ea9d09444882A8A955F5863194E8",
           models: [
             {
