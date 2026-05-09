@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect, type PropsWithChildren } from 'react'
+import React, { useRef, useLayoutEffect, isValidElement, type PropsWithChildren } from 'react'
 
 interface ElementProps extends PropsWithChildren {
   appConfig: Taro.AppConfig
@@ -24,7 +24,10 @@ const Element = ({
           flex: 1,
         }}
       >
-        {children}
+        {isValidElement(children) ? React.cloneElement<any>(children, {
+          ['data-loc']: children.props['data-loc'] || '1',
+          ['_mybricks_page']: true
+        }) : children}
       </div>
       {/* 占位 */}
       <div style={{ width: '100%', height: 50 }}></div>

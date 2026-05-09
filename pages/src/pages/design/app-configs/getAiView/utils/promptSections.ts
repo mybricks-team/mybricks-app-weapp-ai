@@ -116,7 +116,7 @@ const promptSections = {
   - 细节：在每个细节都精心完善；
   - 响应式：保证合理统一的间距，以及支持宽度变化自适应的代码；
   - 画布宽度：414px；
-  - 组件的事件注释：任何事件都必须包含注释「/** 事件名:事件key */」注释；
+  - 组件的事件注释：任何事件都必须包含注释「/** onXXX:唯一key */」注释；
 - 拆分逻辑
   - 精准识别到底是页面还是弹窗，对其进行拆分，如果是页面，需要在\`app.config.ts\`中的pages进行配置，如果是tab页，需要同时在\`app.config.ts\`中的pages以及tabBar.list进行配置， 如果是弹窗，需要使用popupRef；
   - tab页判断原则，tabBar 代表「多入口并列切换」的导航结构，不是多页面应用的标配。判断标准：
@@ -185,7 +185,7 @@ const promptSections = {
 3. 禁止编写、使用未实现的事件函数；
 4. 业务逻辑封装在 store 中（例如：登录态校验、数据查询等）；
 5. 组件各类状态控制维护在 store 中（例如：loading、选中态、状态切换等）；
-6. 包含事件props（例如 onClick、onChange、onBlur 等）的标签内必须包含注释「/** 事件名:事件key */」，注释与事件props同级，而不是在事件函数内；
+6. 包含事件props（例如 onClick、onChange、onBlur 等）的标签内必须包含注释「/** onXXX:唯一key */」，注释与事件props同级，而不是在事件函数内；
 7. 对于浮层类组件，如弹窗、抽屉等，控制浮层的显示/打开/弹出/隐藏状态的变量必须维护在 store 中，这类状态禁止设置一个固定的值；
 8. 严格遵守 tsx 语法规范；
 9. 所有来自三方库的组件必须带有 className 属性，值需语义化明确且唯一，无论是否需要样式，以便通过 CSS 选择器选中；
@@ -353,7 +353,7 @@ PopupVisible 装饰器说明：
 根据当前应用的 tsx 源码，生成或更新对应的 README.md 说明文档
 更新时机：
 - 必须更新（强约束）：目录下不存在 README.md；或当前文档内容与「文档编写规范」不符；或需求明确要求更新文档；
-- 建议更新（结构或内容变化）：在 tsx 中新增、删除或重命名了 appRef/comRef 节点，或通过 \`app.config.ts\` 中 pages 注册的页面发生变化；export default 的根节点类型或子节点类型组合发生变化导致标题层级需调整；JSX 中新增、删除或修改了带 /** onXXX:事件名 */ 注释的事件；某节点的 UI 结构、交互或业务含义发生明显变化；
+- 建议更新（结构或内容变化）：在 tsx 中新增、删除或重命名了 appRef/comRef 节点，或通过 \`app.config.ts\` 中 pages 注册的页面发生变化；export default 的根节点类型或子节点类型组合发生变化导致标题层级需调整；JSX 中新增、删除或修改了带 /** onXXX:唯一key */ 注释的事件；某节点的 UI 结构、交互或业务含义发生明显变化；
 - 无需更新：tsx、store.ts 未被修改，且现有 README.md 已正确反映当前源码的节点结构、事件与说明；仅修改了 less 等与节点行为无关的文件；
 <README.md 文档编写规范>
   <节点>
@@ -381,9 +381,9 @@ PopupVisible 装饰器说明：
   - summary：对节点的用途、场景或关键行为做简短说明，补充 title 未涵盖的信息，避免与 title 重复或仅罗列 UI 元素；
   - type：app | page | com，其中 app 对应 appRef，page 对应通过 \`app.config.ts\` 中 pages 注册的页面，com 对应 comRef（非页面）。
   - events：该组件内声明的事件列表（找最近的组件，而不是页面）
-    1. 从源码识别：JSX 块注释如 /** onClick:事件名 */（或其它 onXXX:事件名）
+    1. 从源码识别：JSX 块注释如 /** onClick:唯一key */（或其它 onXXX:唯一key）
     2. 每条事件用结构化格式描述，包含以下字段：
-        - 事件名
+        - 唯一key(只允许英文字符)
           - title: 简短中文说明（如 登录）
           - mermaid: 根据事件内容生成对应的 Mermaid 语法流程图（以 flowchart LR; 开头，单行书写）
           - relation:
@@ -408,7 +408,7 @@ PopupVisible 装饰器说明：
   - datasource：该组件内调用的接口列表（找最近的组件，而不是页面）
     1. 从源码识别：JSX 块注释如 /** datasource:唯一key */
     2. 每条接口调用用结构化格式描述，包含以下字段：
-      - 唯一key
+      - 唯一key(只允许英文字符)
         - api（真实方法名，对应 datasource 中的方法）
           - desc: 用途说明
     3. 特殊情况：当接口调用在函数体或 React hooks（如 useEffect）内时，使用「root」作为唯一key
@@ -416,7 +416,7 @@ PopupVisible 装饰器说明：
   - store：该组件内消费的store数据列表（找最近的组件，而不是页面）
     1. 从源码识别：JSX块注释如 /** store:唯一key */
     2. 每个唯一key下是一个数组，支持描述多个字段的消费（可能来自不同store或同一store的不同字段）：
-      - 唯一key
+      - 唯一key(只允许英文字符)
         - 对应store文件的绝对路径
           - field: 对应store的属性路径
           - desc: 用途说明
