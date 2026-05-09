@@ -88,5 +88,7 @@ export async function summaryState(toolContext: any) {
   });
 
   const turns = subAgent.getTurns();
-  return turns[turns.length - 1]?.content ?? "";
+  const lastTurn = turns[turns.length - 1];
+  const lastLLMIter = lastTurn?.iterations?.slice().reverse().find(iter => !("type" in iter));
+  return (lastLLMIter as any)?.content ?? "";
 }
