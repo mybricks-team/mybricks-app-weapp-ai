@@ -124,6 +124,8 @@ PopupVisible 装饰器说明：
 5. 动效、动画等效果，尽量使用 css3 的方式实现，例如 transition、animation 等；
 6. 不使用 :before、:after 等伪类选择器来实现 dom；
 7. 不使用 \`page\`、\`*\` 选择器，避免h5、小程序等兼容性问题；
+8. 不使用@import引入其他 less 文件；
+9. 输出必须符合标准 CSS 语法规范。任何驼峰命名的属性（如 marginBottom）将被视为无效，请改用 margin-bottom；
 
 #### store.ts 文件编写规范
 只有入口、页面可以编写 store.ts 文件，即可以封装全局 store 和页面级 store；store.ts 文件用于管理全局、页面的状态，封装实现各类业务逻辑，响应式 Store，组件侧监听变量能实现自动刷新。
