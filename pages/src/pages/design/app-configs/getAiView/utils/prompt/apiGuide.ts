@@ -221,6 +221,7 @@ export default scheme
 所有正式数据（接口请求、静态数据）必须维护在 \`dataSource.js\` 文件中。
 必须根据scheme中的生成的数据类型定义接口
 通过继承 \`DataSource\` 基类并 \`export default new MyDatasource()\` 来声明数据源；
+非必要情况禁止在\`dataSource.js\` 做逻辑处理
 
 怎么声明数据源：
 1. 判断用户是否提供接口信息，对于提供了接口信息的，使用 \`this.axios\` 发起请求；
