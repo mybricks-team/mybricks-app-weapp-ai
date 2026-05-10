@@ -57,11 +57,14 @@ function summarizeApiDocs(apiDocs: ApiDocItem[]) {
     return "未获取到接口文档，dataSource.js 和 setup.js 无需更新，跳过接口同步。";
   }
 
+  const schemeFileContent = `const scheme = ${JSON.stringify(apiDocs, null, 2)};\n\nexport default scheme;\n`;
+
   return [
-    "已获取到接口文档，scheme 内容如下：",
-    JSON.stringify(apiDocs, null, 2),
-    "1. 接口返回的 scheme 作为参考标准，只能通过编辑工具写入 scheme.js，内容必须保持完全一致。",
-    "2. 已获取接口信息，可用于后续 dataSource.js 和 setup.js 的生成。",
+    "已获取到接口文档。",
+    "请使用 write-file 将下方完整内容覆盖写入 scheme.js，不要使用 edit-file，不要改写、删减、重排字段内容。",
+    "写入完成后，再基于最新的 scheme.js 同步 dataSource.js 和 setup.js。",
+    "scheme.js 完整内容如下：",
+    schemeFileContent,
   ].join("\n\n");
 }
 
