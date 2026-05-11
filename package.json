@@ -1,6 +1,6 @@
 {
   "name": "mybricks-app-weapp-ai",
-  "version": "1.0.3",
+  "version": "1.0.6",
   "description": "AI生成小程序和H5的多端解决方案",
   "scripts": {
     "watch:be-local": "nodemon --ext js,ts --exec 'NODE_ENV=development MYBRICKS_PLATFORM_ADDRESS=http://localhost:3100 node nodejs/index.js'",
@@ -67,7 +67,7 @@
     "react": {
       "name": "mybricks-app-weapp-ai",
       "description": "AI生成小程序和H5的多端解决方案",
-      "version": "1.0.5",
+      "version": "1.0.6",
       "mybricks": {
         "extName": "weapp-ai",
         "icon": "/mybricks-app-weapp-ai/public/icon.svg",
