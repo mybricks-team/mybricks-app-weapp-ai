@@ -89,6 +89,15 @@ export const EXAMPLE_CODE = `
   export default SignUp
   \`\`\`
 
+  \`\`\`tsx file="pages/signup/index.less"
+  .container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    .title {}
+  }
+  \`\`\`
+
   \`\`\`tsx file="pages/signup/index.config.ts"
   export default definePageConfig({
     navigationBarTitleText: '注册'

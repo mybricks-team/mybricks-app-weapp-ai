@@ -42,7 +42,7 @@ export function generateCodeStructure(data: ComponentData): FileItem[] {
 
   data.files.forEach((file) => {
     const { fileName, source } = file;
-    const filterFiles = ['setup.js', 'scheme.js']
+    const filterFiles = ['setup.ts', 'scheme.ts']
     if (filterFiles.includes(fileName)) {
       return
     }

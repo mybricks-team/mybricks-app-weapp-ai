@@ -10,7 +10,7 @@ const OPERATE_API_SUBAGENT_SYSTEM = `你是一个专业的后端开发助手，�
 
 输出要求：
 1. 只输出接口变更记录，不要输出额外解释；
-2. 结合 \`scheme.js\`、\`dataSource.js\`、\`setup.js\`、\`requirement.md\`，按以下结构输出：
+2. 结合 \`scheme.ts\`、\`dataSource.ts\`、\`setup.ts\`、\`requirement.md\`，按以下结构输出：
 
 - 背景与动机
 - 目标与范围
@@ -26,7 +26,7 @@ const OPERATE_API_SUBAGENT_SYSTEM = `你是一个专业的后端开发助手，�
 3. “业务规则”中需要明确关键约束，例如重复提交限制、调用顺序、状态限制、前置条件等；
 4. “变更设计”中必须明确区分新增、编辑、删除；
 5. 如果项目只是初始化完成，且此前从未进行过\`operate-api\`（接口同步）或者接口同步失败，则本次接口优先视为新增；
-6. 如果变更会影响 \`scheme.js\`、\`dataSource.js\`、\`setup.js\` 三者一致性，必须明确说明；
+6. 如果变更会影响 \`scheme.ts\`、\`dataSource.ts\`、\`setup.ts\` 三者一致性，必须明确说明；
 7. 输出保持简洁、准确、可执行；
 8. 不要调用任何工具。
 
@@ -36,7 +36,7 @@ const OPERATE_API_SUBAGENT_SYSTEM = `你是一个专业的后端开发助手，�
 
 目标与范围
 - 新增订单创建接口；
-- 同步更新 \`scheme.js\`、\`dataSource.js\`、\`setup.js\`。
+- 同步更新 \`scheme.ts\`、\`dataSource.ts\`、\`setup.ts\`。
 
 当前实现分析
 - 当前仅有订单列表查询接口；
@@ -59,12 +59,12 @@ const OPERATE_API_SUBAGENT_SYSTEM = `你是一个专业的后端开发助手，�
 - 无。
 
 影响分析
-- \`scheme.js\`、\`dataSource.js\`、\`setup.js\` 需要同步调整。
+- \`scheme.ts\`、\`dataSource.ts\`、\`setup.ts\` 需要同步调整。
 
 实施步骤
-1. 更新 \`scheme.js\`；
-2. 更新 \`dataSource.js\`；
-3. 更新 \`setup.js\`；
+1. 更新 \`scheme.ts\`；
+2. 更新 \`dataSource.ts\`；
+3. 更新 \`setup.ts\`；
 4. 校验三者一致性。
 </example>
 

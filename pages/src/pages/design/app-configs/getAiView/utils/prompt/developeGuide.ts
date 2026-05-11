@@ -18,8 +18,9 @@ const firstOfAll = `- 开发宪章
   - 画布宽度：414px；
   - 组件的事件注释：任何事件都必须包含注释「/** onXXX:唯一key */」注释；
   - 忽略编译、脚手架、构建配置等一切非源码内容，不输出也不讨论；
+  - 必须严格遵守「允许使用的类库」提供的规范，后续所有回答不得违反；
 - 拆分逻辑
-  - 精准识别到底是页面还是弹窗，对其进行拆分，如果是页面，需要在\`app.config.ts\`中的pages进行配置，如果是tab页，需要同时在\`app.config.ts\`中的pages以及tabBar.list进行配置， 如果是弹窗，需要使用popupRef；
+  - 精准识别到底是页面还是弹窗，对其进行拆分，如果是页面，需要在\`app.config.ts\`中的pages进行配置，如果是tab页，需要同时在\`app.config.ts\`中的pages以及tabBar.list进行配置， 如果是弹窗，需要使用popupRef，一个弹窗一个popupRef；
   - tab页判断原则，tabBar 代表「多入口并列切换」的导航结构，不是多页面应用的标配。判断标准：
     - 需要 tabBar：需求中明确出现多个平级主功能模块可以来回切换（如首页/我的），页面关系是「并列」而非「跳转」；
     - 不需要 tabBar：登录、注册、详情、功能流程等场景，即使包含多个页面，页面间是跳转关系，不是并列切换；
@@ -48,7 +49,7 @@ const architectureSection = `\`\`\`
 ├─ app.tsx                # 应用渲染入口，有且仅有一个，必须写在根路径，文件名必须为app.tsx
 ├─ app.less               # 全局样式（可选）
 ├─ store.ts               # 全局 store（可选）
-├─ scheme.js    # 接口 scheme （项目唯一文件且必须，而且在dataSource.js和 setup.js之前写入）
+├─ scheme.ts              # 接口 scheme （项目唯一文件且必须，而且在dataSource.ts和 setup.ts之前写入）
 ├─ dataSource.ts          # 真实接口（项目唯一文件且必须）
 ├─ setup.ts               # mock接口（项目唯一文件且必须）
 ├─ pages                  # 页面
@@ -134,6 +135,7 @@ const architectureSection = `\`\`\`
     1. 当没有合适的JSX标签编写注释时，通常可能是外层使用空标签\`<>\`或\`<Fragment>\`，此时不需要写注释
     2. 当外层容器和内部子元素消费同一个store字段时，应将注释写在最外层容器上，避免重复注释
 16. 项目已启用 CSS Modules，所有样式必须使用 import css from '*.less' 的方式，并通过 css.className 引用
+17. 全局mock数据都必须在 setup.ts 中定义，不能在其他文件中定义；
 
 保留字段（禁止通过 props 传递）：
 - \`_env\`：环境变量，\`_env.mode\` 表示运行环境（design | runtime）；
@@ -160,9 +162,8 @@ PopupVisible 装饰器说明：
 4. 尽量不要用 calc 等复杂的计算；
 5. 动效、动画等效果，尽量使用 css3 的方式实现，例如 transition、animation 等；
 6. 不使用 :before、:after 等伪类选择器来实现 dom；
-7. 不使用 \`page\`、\`*\` 选择器，避免h5、小程序等兼容性问题；
-8. 不使用@import引入其他 less 文件；
-9. 输出必须符合标准 CSS 语法规范。任何驼峰命名的属性（如 marginBottom）将被视为无效，请改用 margin-bottom；
+7. 不使用 @import 引入其他 less 文件；
+8. 输出必须符合标准 CSS 语法规范。任何驼峰命名的属性（如 marginBottom）将被视为无效，请改用 margin-bottom；
 
 #### store.ts 文件编写规范
 只有入口、页面可以编写 store.ts 文件，即可以封装全局 store 和页面级 store；store.ts 文件用于管理全局、页面的状态，封装实现各类业务逻辑，响应式 Store，组件侧监听变量能实现自动刷新。
@@ -219,12 +220,12 @@ PopupVisible 装饰器说明：
 - 区块独立性：父组件只负责布局与子区块挂载，不向子区块传递 value、onChange、onClick 等受控属性；子区块自行从 store 读数据并调用 store 方法；
 
 ### 接口操作规范
-- \`scheme.js\` 是 \`dataSource.js\` 和 \`setup.js\` 的接口约束基准，三者必须保持一致。
+- \`scheme.ts\` 是 \`dataSource.ts\` 和 \`setup.ts\` 的接口约束基准，三者必须保持一致。
 
 更新时机：
 - 用户新增、删除或修改了接口相关功能时，必须同步更新；
 - 后端返回了新的真实接口定义、字段结构、业务约束或接口映射关系时，必须立即同步更新；
-- \`scheme.js\`、\`dataSource.js\`、\`setup.js\` 任一文件发生接口相关变更时，必须检查其余两个文件是否需要同步更新；
+- \`scheme.ts\`、\`dataSource.ts\`、\`setup.ts\` 任一文件发生接口相关变更时，必须检查其余两个文件是否需要同步更新；
 - 页面功能与接口绑定关系发生变化时，必须同步更新接口使用说明和对应实现；
 `
 

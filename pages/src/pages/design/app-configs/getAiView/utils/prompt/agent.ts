@@ -39,8 +39,8 @@ const usingToolsSection  = `# 工具使用
 1. 意图识别 / 需求分析：尽量通过上下文信息确定用户的意图，确定后告知用户的结论并且即将要做的事情；
 2. 设计视觉方案：根据用户意图，调用 \`${FRONTEND_DESIGN_SK_NAME}\` 进行设计或者拓展，设计视觉效果出色且独具特色的界面；
 3. 代码开发，一般可以选用以下工具：
-  - 3.1 初始化项目流程：使用 \`${INIT_PROJECT_TOOL_NAME}\` 批量写入文件，快速完成项目，完成后可以进入第3阶段。
-  - 3.2 基于现有项目进行修改：自主选用下列工具来完成目标，完成后可以进入第3阶段。
+  - 3.1 初始化项目流程：使用 \`${INIT_PROJECT_TOOL_NAME}\` 批量写入文件，快速完成项目，完成后可以进入第4阶段。
+  - 3.2 基于现有项目进行修改：自主选用下列工具来完成目标，完成后可以进入第4阶段。
     - 使用 \`${EDIT_TOOL_NAME}\` 或 \`${MULTI_EDIT_TOOL_NAME}\`  修改已有文件。这是修改文件的首选工具，因为它只更新差异部分，注意提供必要的行，防止替换时误删除。
     - 使用 \`${WRITE_TOOL_NAME}\` 只有在新建少量文件，或在需要重写某个文件时使用。对已有文件优先使用编辑操作。
     - 使用 \`${DELETE_TOOL_NAME}\` 删除文件
@@ -52,12 +52,12 @@ const usingToolsSection  = `# 工具使用
   - 检查文档是否需要更新，特别是README.md 和 requirement.md），如果要修改，则进行修改。文档的修改决策和思路基于后续提供的「文档规范」章节。
 6. 接口同步（仅在用户明确要求时执行）
   - 只有当用户明确要求"同步接口"、"操作接口"、"生成真实接口"等类似表述时，才调用 \`${OPERATE_API_TOOL_NAME}\` 工具。
-  - 如果用户没有明确要求，即使修改了 scheme.js、dataSource.js、setup.js，也不要主动调用 \`${OPERATE_API_TOOL_NAME}\`。
+  - 如果用户没有明确要求，即使修改了 scheme.ts、dataSource.ts、setup.ts，也不要主动调用 \`${OPERATE_API_TOOL_NAME}\`。
   - 当 \`${OPERATE_API_TOOL_NAME}\` 返回成功时：
-    1. 使用 \`${WRITE_TOOL_NAME}\` 将工具返回的完整内容覆盖写入 scheme.js（不得使用 \`${EDIT_TOOL_NAME}\`，不得改写、删减、重排字段）；
-    2. 写入完成后，必须再次调用 \`${OPERATE_API_TOOL_NAME}\` 进行真实性校验，由接口来判断 scheme.js 是否与后端一致：
+    1. 使用 \`${WRITE_TOOL_NAME}\` 将工具返回的完整内容覆盖写入 scheme.ts（不得使用 \`${EDIT_TOOL_NAME}\`，不得改写、删减、重排字段）；
+    2. 写入完成后，必须再次调用 \`${OPERATE_API_TOOL_NAME}\` 进行真实性校验，由接口来判断 scheme.ts 是否与后端一致：
       - 若再次触发同步，表示写入存在漂移，继续执行同步流程直到校验通过；
-    3. 校验通过后，再基于最新 scheme.js 同步 dataSource.js 和 setup.js，完成后流程结束，等待用户的下一步指令。
+    3. 校验通过后，再基于最新 scheme.ts 同步 dataSource.ts 和 setup.ts，完成后流程结束，等待用户的下一步指令。
 </常用工作流>
 
 <并行调用工具原则：必须遵守>

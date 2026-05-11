@@ -5,9 +5,9 @@ const API_URL = "/biz/v2/ai/batchGenerateModuleStream";
 const MYBRICKS_GROUP_ID = "816814702252101";
 
 const FILE_WHITELIST = [
-  "dataSource.js",
-  "scheme.js",
-  "setup.js",
+  "dataSource.ts",
+  "scheme.ts",
+  "setup.ts",
   "requirement.md",
 ];
 
@@ -52,16 +52,16 @@ function formatShemeObj(content: string) {
  */
 function summarizeApiDocs(apiDocs: ApiDocItem[]) {
   if (!Array.isArray(apiDocs) || apiDocs.length === 0) {
-    return "未获取到接口文档，dataSource.js 和 setup.js 无需更新，跳过接口同步。";
+    return "未获取到接口文档，dataSource.ts 和 setup.ts 无需更新，跳过接口同步。";
   }
 
   const schemeFileContent = `const scheme = ${JSON.stringify(apiDocs, null, 2)};\n\nexport default scheme;\n`;
 
   return [
     "已获取到接口文档。",
-    "请使用 write-file 将下方完整内容覆盖写入 scheme.js，不要使用 edit-file，不要改写、删减、重排字段内容。",
-    "写入完成后，再基于最新的 scheme.js 同步 dataSource.js 和 setup.js。",
-    "scheme.js 完整内容如下：",
+    "请使用 write-file 将下方完整内容覆盖写入 scheme.ts，不要使用 edit-file，不要改写、删减、重排字段内容。",
+    "写入完成后，再基于最新的 scheme.ts 同步 dataSource.ts 和 setup.ts。",
+    "scheme.ts 完整内容如下：",
     schemeFileContent,
   ].join("\n\n");
 }
@@ -73,7 +73,7 @@ function summarizeApiDocs(apiDocs: ApiDocItem[]) {
 export function formatFiles(): FilesResult {
   const codeFiles = new CodeFiles(FILE_WHITELIST);
   const files = codeFiles.getFilesJson();
-  const schemeFile = files.find((file: any) => file.fileName === "scheme.js");
+  const schemeFile = files.find((file: any) => file.fileName === "scheme.ts");
   const scheme = formatShemeObj(schemeFile?.content || "");
 
   const requirement = files.find(

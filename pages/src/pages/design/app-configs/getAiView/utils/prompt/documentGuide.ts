@@ -111,10 +111,10 @@ ${EXAMPLE_CODE}
       - desc: 点击登录按钮调用登录接口
 - store:
   - loginInfo
-    - /store.js
+    - /store.ts
       - field: welcomeMsg
       - desc: 展示欢迎语
-    - /store.js
+    - /store.ts
       - field: userType
       - desc: 展示用户类型
 
