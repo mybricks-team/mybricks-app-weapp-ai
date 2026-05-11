@@ -45,7 +45,6 @@ const tramsformAppJs = (code: string) => {
 
 function insertImportAfterLastImport(code: string, newImport: string) {
   const lines = code.split('\n');
-  console.log('=====',code,lines)
   let lastImportIndex = -1;
   // 从后向前找最后一个以 'import ' 开头的行
   for (let i = lines.length - 1; i >= 0; i--) {

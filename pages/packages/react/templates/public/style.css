@@ -11,3 +11,7 @@
 taro-textarea-core {
   width: auto;
 }
+
+input {
+  text-align: inherit;
+}
