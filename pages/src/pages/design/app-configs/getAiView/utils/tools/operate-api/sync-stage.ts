@@ -33,9 +33,7 @@ type ApiDocItem = {
 };
 
 function formatShemeObj(content: string) {
-  const match = content.match(
-    /const\s+\w+\s*=\s*(\[[\s\S]*?\])\s*export\s+default\s+\w+/,
-  );
+  const match = content.match(/const\s+scheme\s*=\s*(\[[\s\S]*?\])\s*;?/);
   if (!match?.[1]) return [];
 
   try {
