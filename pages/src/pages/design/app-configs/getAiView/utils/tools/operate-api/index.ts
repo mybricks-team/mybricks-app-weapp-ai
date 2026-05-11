@@ -1,4 +1,4 @@
-import { renderOperateApiTool } from "./render";
+// import { renderOperateApiTool } from "./render";
 import { checkState } from "./check-stage";
 import { getOperateApiSummary } from "./summary-state";
 import { syncState, formatFiles } from "./sync-stage";
@@ -19,7 +19,7 @@ export function createOperateApiTool(fileId: string) {
     title: "操作接口",
     description:
       "根据当前用户需求先整理接口变更记录，根据当前用户需求请求后端服务，操作接口，保持前后端的一致性。",
-    render: renderOperateApiTool,
+    // render: renderOperateApiTool,
     parameters: {
       type: "object",
       properties: {},
