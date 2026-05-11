@@ -223,6 +223,11 @@ export default scheme
 通过继承 \`DataSource\` 基类并 \`export default new MyDatasource()\` 来声明数据源；
 非必要情况禁止在\`dataSource.js\` 做逻辑处理
 
+**重要约束：**
+- \`dataSource.js\` 中的接口方法必须严格基于 \`scheme.js\` 中已定义的接口来实现，使用 \`this.axios\` 发起真实请求；
+- 禁止在 \`dataSource.js\` 中编造接口 URL、自行猜测路径、或使用任何形式的模拟数据（hardcode 返回值、Math.random、setTimeout 假数据等）；
+- 如果 \`scheme.js\` 尚未通过 \`operate-api\` 同步，则 \`dataSource.js\` 中对应方法暂时留空或仅保留方法签名，等待接口同步完成后再补全实现；
+
 怎么声明数据源：
 1. 判断用户是否提供接口信息，对于提供了接口信息的，使用 \`this.axios\` 发起请求；
 
@@ -261,7 +266,7 @@ export default new MyDatasource()
 
 一共需要关心 设计态 + 运行态（正式环境 + N套自定义环境）：
 1. 搭建环境：使用 mock 定义，由于axios在设计态无法调用，我们需要劫持动态数据的接口以保证设计态的正常返回
-2. 正式环境：使用 dataSource.js 中定义的静态数据和接口请求；
+2. 正式环境：使用 dataSource.js 中定义的接口请求；
 3. N套自定义环境：用户需要时声明，比如特殊环境和特殊测试场景；
 4. 必须根据scheme中的生成的数据类型数据
 

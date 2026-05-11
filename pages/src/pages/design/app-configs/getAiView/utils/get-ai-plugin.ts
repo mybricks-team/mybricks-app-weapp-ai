@@ -22,6 +22,15 @@ export default ({ user, key }: any) => {
               id: "kimi-k2.6",
               name: "Kimi-K2.6",
             },
+            {
+              id: "deepseek-v4-flash",
+              name: "deepseek-v4-flash",
+            },
+            {
+              id: "claude-sonnet-4-6",
+              name: "claude-sonnet-4-6",
+            },
+            
           ],
         },
       ],

@@ -123,6 +123,7 @@ export async function getOperateApiSummary(params: {
   }
 
   const summary = await summaryState(toolContext);
+  console.log('=====summary', summary)
   if (!summary) {
     return {
       summary: "",

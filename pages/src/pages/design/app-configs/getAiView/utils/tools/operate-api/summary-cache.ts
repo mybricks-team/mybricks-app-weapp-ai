@@ -12,12 +12,18 @@ export type SummaryCacheItem = {
 const SUMMARY_CACHE_EXPIRE_MS = 30 * 60 * 1000;
 const summaryCacheMap = new Map<string, SummaryCacheItem>();
 
-export function buildOperateApiFingerprint(filesObj: OperateApiSummaryFiles, userMessage: string) {
-  return JSON.stringify({
-    apiScheme: filesObj.apiScheme,
-    requirement: filesObj.requirement,
-    userMessage,
-  });
+function djb2(str: string): string {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash) ^ str.charCodeAt(i);
+    hash = hash >>> 0;
+  }
+  return hash.toString(16);
+}
+
+export function buildOperateApiFingerprint(filesObj: OperateApiSummaryFiles, userMessage: string): string {
+  const stable = JSON.stringify([filesObj.apiScheme, filesObj.requirement, userMessage]);
+  return djb2(stable);
 }
 
 export function getOperateApiSummaryCache(fileId: string, fingerprint: string) {

@@ -1,6 +1,7 @@
-// import { renderOperateApiTool } from "./render";
+import { renderOperateApiTool } from "./render";
 import { checkState } from "./check-stage";
 import { getOperateApiSummary } from "./summary-state";
+
 import { syncState, formatFiles } from "./sync-stage";
 import {
   createExecuteErrorResult,
@@ -19,7 +20,7 @@ export function createOperateApiTool(fileId: string) {
     title: "操作接口",
     description:
       "根据当前用户需求先整理接口变更记录，根据当前用户需求请求后端服务，操作接口，保持前后端的一致性。",
-    // render: renderOperateApiTool,
+    render: renderOperateApiTool,
     parameters: {
       type: "object",
       properties: {},
@@ -63,18 +64,11 @@ export function createOperateApiTool(fileId: string) {
         });
 
         const result = await syncState(fileId, summary, filesObj);
-        console.log("=======result", result);
-
-        toolContext.emitProgress?.({
-          stage: "pending",
-          message: "正在校验同步结果",
-        });
-
-        const verified = await checkState(result.rawResponse, fileId);
-        if (!verified) {
+        console.log('=====result', result)
+        if (!Array.isArray(result.rawResponse) || result.rawResponse.length === 0) {
           toolContext.emitProgress?.({
             stage: "error",
-            message: "接口同步完成，但校验未通过，请重试同步",
+            message: "接口同步完成，但后端未返回有效接口数据，请重试",
           });
           return createVerifyFailResult({
             summary,

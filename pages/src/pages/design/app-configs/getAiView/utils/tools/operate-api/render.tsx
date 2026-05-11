@@ -1,16 +1,10 @@
 import React from "react";
-import type { ToolRecord } from "../../../../../../../../../../plugin-ai/packages/plugin/src/ui/chat/messages/tool-renders";
-import {
-  PendingCodeCard,
-  CodeCard,
-} from "../../../../../../../../../../plugin-ai/packages/plugin/src/ui/chat/messages/tool-renders/shared";
-import { FileIcon } from "../../../../../../../../../../plugin-ai/packages/plugin/src/ui/components/icons";
+import { PendingCodeCard, CodeCard, FileIcon, type ToolRecord } from "./render/components";
 
 function getPreviewContent(tool: ToolRecord) {
   if (typeof tool.result?.output === "string" && tool.result.output) {
     return tool.result.output;
   }
-
   return "";
 }
 

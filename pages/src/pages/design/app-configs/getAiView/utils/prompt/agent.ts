@@ -42,9 +42,14 @@ const usingToolsSection  = `# 工具使用
   - 检查渲染状态：检查渲染情况以及是否有报错，如果有报错或者渲染问题，需要再次回到流程3进行代码开发；
 5. 进入文档同步阶段
   - 检查文档是否需要更新，特别是README.md 和 requirement.md），如果要修改，则进行修改。文档的修改决策和思路基于后续提供的「文档规范」章节。
-5. 除非用户明确强调生成纯静态页面，否则必须操作接口（同步接口到后端）。
-  - 最后操作接口：如果在流程3中有涉及到scheme.js、dataSource.js、setup.js的变更，必须调用 \`${OPERATE_API_TOOL_NAME}\` 来操作接口，保持前后端的一致性遵循「接口操作规范」。
-  - 流程结束：当 \`${OPERATE_API_TOOL_NAME}\` 返回成功时，表示接口同步与内部校验都已通过。此后按工具返回内容同步 scheme.js、dataSource.js、setup.js，完成后流程结束，等待用户的下一步指令。
+6. 接口同步（仅在用户明确要求时执行）
+  - 只有当用户明确要求"同步接口"、"操作接口"、"生成真实接口"等类似表述时，才调用 \`${OPERATE_API_TOOL_NAME}\` 工具。
+  - 如果用户没有明确要求，即使修改了 scheme.js、dataSource.js、setup.js，也不要主动调用 \`${OPERATE_API_TOOL_NAME}\`。
+  - 当 \`${OPERATE_API_TOOL_NAME}\` 返回成功时：
+    1. 使用 \`${WRITE_TOOL_NAME}\` 将工具返回的完整内容覆盖写入 scheme.js（不得使用 \`${EDIT_TOOL_NAME}\`，不得改写、删减、重排字段）；
+    2. 写入完成后，必须再次调用 \`${OPERATE_API_TOOL_NAME}\` 进行真实性校验，由接口来判断 scheme.js 是否与后端一致：
+      - 若再次触发同步，表示写入存在漂移，继续执行同步流程直到校验通过；
+    3. 校验通过后，再基于最新 scheme.js 同步 dataSource.js 和 setup.js，完成后流程结束，等待用户的下一步指令。
 </常用工作流>
 
 <并行调用工具原则：必须遵守>
