@@ -44,7 +44,7 @@ const usingToolsSection  = `# 工具使用
   - 检查文档是否需要更新，特别是README.md 和 requirement.md），如果要修改，则进行修改。文档的修改决策和思路基于后续提供的「文档规范」章节。
 5. 除非用户明确强调生成纯静态页面，否则必须操作接口（同步接口到后端）。
   - 最后操作接口：如果在流程3中有涉及到scheme.js、dataSource.js、setup.js的变更，必须调用 \`${OPERATE_API_TOOL_NAME}\` 来操作接口，保持前后端的一致性遵循「接口操作规范」。
-  - 流程结束：在\`${OPERATE_API_TOOL_NAME}\`工具返回成功时，跟真实接口再次同步一次scheme.js、dataSource.js、setup.js文件。完成后流程结束，等待用户的下一步指令。
+  - 流程结束：当 \`${OPERATE_API_TOOL_NAME}\` 返回成功时，表示接口同步与内部校验都已通过。此后按工具返回内容同步 scheme.js、dataSource.js、setup.js，完成后流程结束，等待用户的下一步指令。
 </常用工作流>
 
 <并行调用工具原则：必须遵守>

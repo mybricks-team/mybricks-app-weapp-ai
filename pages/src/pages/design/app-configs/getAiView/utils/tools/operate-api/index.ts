@@ -1,7 +1,15 @@
 import { renderOperateApiTool } from "./render";
 import { checkState } from "./check-stage";
-import { summaryState } from "./summary-state";
+import { getOperateApiSummary } from "./summary-state";
 import { syncState, formatFiles } from "./sync-stage";
+import {
+  createExecuteErrorResult,
+  createNoNeedSyncResult,
+  createSummaryFailedResult,
+  createVerifyFailResult,
+  createVerifySuccessResult,
+  type OperateApiResult,
+} from "./result";
 
 export const OPERATE_API_TOOL_NAME = "operate-api";
 
@@ -16,84 +24,83 @@ export function createOperateApiTool(fileId: string) {
       type: "object",
       properties: {},
     },
-    async execute(_params: any, toolContext: any) {
+    async execute(_params: any, toolContext: any): Promise<OperateApiResult> {
       try {
         const filesObj = formatFiles();
 
-        //检测接口是否需要变更
         toolContext.emitProgress?.({
           stage: "pending",
           message: "正在检查接口",
         });
 
         const check = await checkState(filesObj.apiScheme, fileId);
-
-        //接口无需变更
-        if(check){
+        if (check) {
           toolContext.emitProgress?.({
             stage: "success",
             message: "接口无需变更",
           });
-          return {
-            output: "前后端接口一致，无需操作接口。直接进行下一步操作。",
-            metadata: {
-              summary: "",
-              rawResponse: [],
-            },
-          };
+          return createNoNeedSyncResult();
         }
 
-        //整理接口变更记录
         toolContext.emitProgress?.({
           stage: "pending",
           message: "正在收集接口所需的上下文信息",
         });
 
-        let summary = "";
-        summary = await summaryState(toolContext);
+        const { summary, reusedSummary } = await getOperateApiSummary({
+          fileId,
+          filesObj,
+          toolContext,
+        });
+
         if (!summary) {
-          return {
-            output: "未生成接口变更记录，请重试。",
-            metadata: {
-              summary: "",
-              rawResponse: [],
-            },
-          };
+          return createSummaryFailedResult();
         }
 
-        //接口请求
         toolContext.emitProgress?.({
           stage: "pending",
-          message: "正在同步接口",
+          message: reusedSummary ? "正在同步接口（复用上次变更记录）" : "正在同步接口",
         });
 
         const result = await syncState(fileId, summary, filesObj);
-        console.log('=======result',result)
+        console.log("=======result", result);
+
+        toolContext.emitProgress?.({
+          stage: "pending",
+          message: "正在校验同步结果",
+        });
+
+        const verified = await checkState(result.rawResponse, fileId);
+        if (!verified) {
+          toolContext.emitProgress?.({
+            stage: "error",
+            message: "接口同步完成，但校验未通过，请重试同步",
+          });
+          return createVerifyFailResult({
+            summary,
+            rawResponse: result.rawResponse,
+            reusedSummary,
+          });
+        }
+
         toolContext.emitProgress?.({
           stage: "success",
           message: "接口同步成功",
         });
 
-        return {
+        return createVerifySuccessResult({
           output: result.output,
-          metadata: {
-            summary,
-            rawResponse: result.rawResponse,
-          },
-        };
+          summary,
+          rawResponse: result.rawResponse,
+          reusedSummary,
+        });
       } catch (error) {
         toolContext.emitProgress?.({
           stage: "error",
           message: `接口同步失败：${error instanceof Error ? error.message : String(error)}`,
         });
 
-        return {
-          output: `接口同步失败：${error instanceof Error ? error.message : String(error)}`,
-          metadata: {
-            summary: "",
-            rawResponse: [],
-          },
-        };
+        return createExecuteErrorResult(error);
       }
     },
   };

@@ -1,3 +1,10 @@
+import {
+  buildOperateApiFingerprint,
+  getOperateApiSummaryCache,
+  setOperateApiSummaryCache,
+  type OperateApiSummaryFiles,
+} from "./summary-cache";
+
 const OPERATE_API_SUBAGENT_SYSTEM = `你是一个专业的后端开发助手，能根据前端需求进行接口分析和变更。
 你的任务是基于用户需求、当前项目上下文以及现有接口相关文件，整理一份可直接提供给后端接口服务使用的接口变更记录。
 
@@ -91,4 +98,41 @@ export async function summaryState(toolContext: any) {
   const lastTurn = turns[turns.length - 1];
   const lastLLMIter = lastTurn?.iterations?.slice().reverse().find(iter => !("type" in iter));
   return (lastLLMIter as any)?.content ?? "";
+}
+
+export async function getOperateApiSummary(params: {
+  fileId: string;
+  filesObj: OperateApiSummaryFiles;
+  toolContext: any;
+}) {
+  const { fileId, filesObj, toolContext } = params;
+  const userMessage = toolContext.getUserMessage?.()?.message || "";
+  const fingerprint = buildOperateApiFingerprint(filesObj, userMessage);
+  const cachedSummary = getOperateApiSummaryCache(fileId, fingerprint);
+
+  toolContext.emitProgress?.({
+    stage: "pending",
+    message: cachedSummary ? "正在复用上次接口变更记录" : "正在生成接口变更记录",
+  });
+
+  if (cachedSummary) {
+    return {
+      summary: cachedSummary,
+      reusedSummary: true,
+    };
+  }
+
+  const summary = await summaryState(toolContext);
+  if (!summary) {
+    return {
+      summary: "",
+      reusedSummary: false,
+    };
+  }
+
+  setOperateApiSummaryCache(fileId, fingerprint, summary);
+  return {
+    summary,
+    reusedSummary: false,
+  };
 }
