@@ -6,8 +6,8 @@ const firstOfAll = `
 ### README.md
 根据当前应用的 tsx 源码，生成或更新对应的 README.md 说明文档
 更新时机：
-- 必须更新（强约束）：目录下不存在 README.md；或现有文档内容与上述规范不符；或需求明确要求更新文档；
-- 建议更新（结构或内容变化）：在 tsx 中新增、删除或重命名了 appRef/comRef 节点，或通过 \`app.config.ts\` 中 pages 注册的页面发生变化；export default 的根节点类型或子节点类型组合发生变化导致标题层级需调整；JSX 中新增、删除或修改了带 /** onXXX:事件名 */ 注释的事件；某节点的 UI 结构、交互或业务含义发生明显变化；
+- 必须更新（强约束）：目录下不存在 README.md；或当前文档内容与「文档编写规范」不符；或需求明确要求更新文档；
+- 建议更新（结构或内容变化）：在 tsx 中新增、删除或重命名了 appRef/comRef 节点，或通过 \`app.config.ts\` 中 pages 注册的页面发生变化；export default 的根节点类型或子节点类型组合发生变化导致标题层级需调整；JSX 中新增、删除或修改了带 /** onXXX:唯一key */ 注释的事件；某节点的 UI 结构、交互或业务含义发生明显变化；
 - 无需更新：tsx、store.ts 未被修改，且现有 README.md 已正确反映当前源码的节点结构、事件与说明；仅修改了 less 等与节点行为无关的文件；
 <README.md 文档编写规范>
   <节点>
@@ -35,9 +35,9 @@ const firstOfAll = `
   - summary：对节点的用途、场景或关键行为做简短说明，补充 title 未涵盖的信息，避免与 title 重复或仅罗列 UI 元素；
   - type：app | page | com，其中 app 对应 appRef，page 对应通过 \`app.config.ts\` 中 pages 注册的页面，com 对应 comRef（非页面）。
   - events：该组件内声明的事件列表（找最近的组件，而不是页面）
-    1. 从源码识别：JSX 块注释如 /** onClick:事件名 */（或其它 onXXX:事件名）
+    1. 从源码识别：JSX 块注释如 /** onClick:唯一key */（或其它 onXXX:唯一key）
     2. 每条事件用结构化格式描述，包含以下字段：
-        - 事件名
+        - 唯一key(只允许英文字符)
           - title: 简短中文说明（如 登录）
           - mermaid: 根据事件内容生成对应的 Mermaid 语法流程图（以 flowchart LR; 开头，单行书写）
           - relation:
@@ -59,35 +59,97 @@ const firstOfAll = `
         - 流程图须真实完整：严格依据事件处理函数内的代码逻辑，以及所调用的 store 方法内部实现来绘制，不省略、不捏造。
         - 分支流程必须完整表达：代码中的 if/else、三元判断、early return、请求成功/失败等所有分支，都必须在流程图中用条件节点 {} 和 |分支标注| 画出；每个分支（如「通过」「不通过」「成功」「失败」）及其后续步骤都须独立延伸，不得只写主流程而省略条件分支。
     3. 无事件可省略 events
+  - datasource：该组件内调用的接口列表（找最近的组件，而不是页面）
+    1. 从源码识别：JSX 块注释如 /** datasource:唯一key */
+    2. 每条接口调用用结构化格式描述，包含以下字段：
+      - 唯一key(只允许英文字符)
+        - api（真实方法名，对应 datasource 中的方法）
+          - desc: 用途说明
+    3. 特殊情况：当接口调用在函数体或 React hooks（如 useEffect）内时，使用「root」作为唯一key
+    4. 无接口调用可省略 datasource
+  - store：该组件内消费的store数据列表（找最近的组件，而不是页面）
+    1. 从源码识别：JSX块注释如 /** store:唯一key */
+    2. 每个唯一key下是一个数组，支持描述多个字段的消费（可能来自不同store或同一store的不同字段）：
+      - 唯一key(只允许英文字符)
+        - 对应store文件的绝对路径
+          - field: 对应store的属性路径
+          - desc: 用途说明
+        - 对应store文件的绝对路径
+          - field: ...
+          - desc: ...
+    3. 特殊情况：当容器本身即为组件时（如 Fragment），使用「root」作为唯一key，path/field 正常填写
+    4. 每一个组件，如果在代码层面没有读取 store 的字段来做ui以及视觉的渲染，禁止编写store信息；即使子组件使用了，也不应该使用root，以实际代码情况为准；
+    5. 无store数据消费可省略 store
   </节点说明>
 </README.md 文档编写规范>
 
 <基于 tsx 的README.md示例>
-如果应用源代码如下
+如果某一个组件源代码如下，可以看到有有四个comRef（其中两个为页面节点）、一个appRef，所以文档包含一个app节点、两个页面节点、一个组件节点。
 ${EXAMPLE_CODE}
-
-可以看到有一个appRef，一个comRef（其中一个为页面节点），所以文档包含一个app节点、一个页面节点。
 
 \`\`\`md file="README.md"
 # default
 
-- title: 登录
-- summary: 应用入口
+- title: 登录/注册应用入口
+- summary: 应用根节点，通过路由提供登录页与注册页的切换与展示。
 - type: app
 
 ---
 
-## Login
+## SignIn
 
 - title: 登录页
-- summary: 用户登录入口页
+- summary: 用户登录入口页，提供登录按钮并触发 signIn 完成登录。
+- type: page
+- events:
+  - signIn
+    - title: 登录
+    - mermaid: flowchart LR; A["校验登录参数"] --> B{"参数是否有效"} -->|有效| C["设置loading状态"] --> D["请求登录接口"] --> E{"请求是否成功"} -->|成功| F["更新用户状态"] --> G["取消loading状态"]; E -->|失败| H["提示错误信息"] --> G; B -->|无效| I["提示参数错误"]
+- datasource:
+  - clickToSignIn
+    - signIn
+      - desc: 点击登录按钮调用登录接口
+- store:
+  - loginInfo
+    - /store.js
+      - field: welcomeMsg
+      - desc: 展示欢迎语
+    - /store.js
+      - field: userType
+      - desc: 展示用户类型
+
+（SignIn 是通过 \`app.config.ts\` 中 pages 注册的页面，因此 type 为 page）
+
+---
+
+## SignUp
+
+- title: 注册页
+- summary: 用户注册入口页，内嵌注册表单组件完成填写与提交。
 - type: page
 
-（Login 是通过 \`app.config.ts\` 中 pages 注册的页面，因此 type 为 page）
+（SignUp 是通过 \`app.config.ts\` 中 pages 注册的页面，因此 type 为 page）
+
+---
+
+### StepRegisterForm
+
+- title: 注册表单区块
+- summary: 注册表单容器，包含表单与注册按钮，提交时触发 signUp。
+- type: com
+- events:
+  - signUp
+    - title: 注册
+    - mermaid: flowchart LR; A["校验表单参数"] --> B{"参数是否有效"} -->|有效| C["设置loading状态"] --> D["请求注册接口"] --> E{"请求是否成功"} -->|成功| F["跳转登录页"] --> G["取消loading状态"]; E -->|失败| H["提示错误信息"] --> G; B -->|无效| I["提示参数错误"]
+- datasource:
+  - clickToSignUp
+    - signUp
+      - desc: 点击注册按钮调用注册接口
+
+\`\`\`
 </基于 tsx 的README.md示例>
 
 ${apiGuide.firstOfAll}
-
 `
 
 const requirementGuide = `<requirement.md 文档编写规范>
@@ -161,7 +223,6 @@ related: NewModalButton,ItemNewModal
 - 用户在商品发布弹窗提交表单后，先调用 /api/product/create；
 - /api/product/create 成功后，再调用 /api/product/list 获取最新数据；
 - /api/product/create 失败时，页面仅提示错误，不刷新列表。
-
 \`\`\`
 </requirement.md示例>`
 

@@ -2,7 +2,8 @@ export const EXAMPLE_CODE = `
   \`\`\`tsx file="app.config.ts"
   export default defineAppConfig({
     pages: [
-      'pages/login/index'
+      'pages/signin/index',
+      'pages/signup/index'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -21,47 +22,76 @@ export const EXAMPLE_CODE = `
   })
   \`\`\`
 
-  \`\`\`tsx file="pages/login/index.tsx"
+  \`\`\`tsx file="pages/signin/index.tsx"
   import { comRef } from 'mybricks'
-  import { View, Text, Input } from '@tarojs/components'
+  import { View, Text, Button } from '@tarojs/components'
   import css from './index.less'
 
-  const Login = comRef(() => {
+  const SignIn = comRef(({}) => {
     return (
-      <View className={css.login-container}>
-        <Text className={css.title}>Welcome Back</Text>
-        <Input
-          className={css.input}
-          type='text'
-          placeholder='Enter your username'
-        />
-        <Input
-          className={css.input}
-          type='password'
-          placeholder='Enter your password'
-        />
+      <View className={css.container}>
+        <Text className={css.title}>登录</Text>
+        <View className={css.loginInfo} /** store:loginInfo */>
+          {store.welcomeMsg} - {store.userType}
+        </View>
+        <Button
+          className={css.loginBtn}
+          /** onClick:signIn */
+          /** datasource:clickToSignIn */
+          onClick={() => {
+            store.signIn();
+          }}
+        >
+          登录
+        </Button>
       </View>
     )
   })
 
-  export default Login
+  export default SignIn
   \`\`\`
 
-  \`\`\`tsx file="pages/login/index.less"
-  .input {
-    width: 100%;
-    height: 48px;
-    line-height: 48px;
-    background: #fff;
-    border-radius: 12px;
-    padding: 0 16px;
-    font-size: 16px;
-  }
-  \`\`\`
-
-  \`\`\`tsx file="pages/login/index.config.ts"
+  \`\`\`tsx file="pages/signin/index.config.ts"
   export default definePageConfig({
-    navigationBarTitleText: 'Login'
+    navigationBarTitleText: '登录'
+  })
+  \`\`\`
+
+  \`\`\`tsx file="pages/signup/index.tsx"
+  import { comRef } from 'mybricks'
+  import { View, Text, Button } from '@tarojs/components'
+  import css from './index.less'
+
+  const StepRegisterForm = comRef(({}) => {
+    return (
+      <View className={css.form}>
+        <Button
+          className={css.registerBtn}
+          /** onClick:signUp */
+          /** datasource:clickToSignUp */
+          onClick={() => {
+            store.signUp();
+          }}
+        >注册</Button>
+      </View>
+    )
+  })
+
+  const SignUp = comRef(() => {
+    return (
+      <View className={css.container}>
+        <Text className={css.title}>注册</Text>
+        <StepRegisterForm />
+      </View>
+    )
+  })
+
+  export default SignUp
+  \`\`\`
+
+  \`\`\`tsx file="pages/signup/index.config.ts"
+  export default definePageConfig({
+    navigationBarTitleText: '注册'
   })
   \`\`\`
 `

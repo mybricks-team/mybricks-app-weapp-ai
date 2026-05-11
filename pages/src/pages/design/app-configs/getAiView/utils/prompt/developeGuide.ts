@@ -5,56 +5,52 @@ import { EXAMPLE_CODE } from './constant'
  * 开发指南
  */
 const firstOfAll = `- 开发宪章
-  > 技术栈：React 18 + Taro 4.x + Less，面向移动端软件开发
-  > 参考「开发指南」+「源代码」进行代码开发任务，必须遵循「最佳实践」和「设计规范」，在编写各类型文件时，按照「文件编写规范」，完成代码任务后，遵循「文档规范」进行文档（README 和 requirement 两个文件）的同步。
-  > @tarojs/components 组件使用必须遵循「Taro Components说明文档」
-  > API调用：无论目标运行环境是什么，所有 API 调用都使用 Taro 提供的 API（如路由、存储、网络请求等），以确保跨平台兼容性
+> 严格基于 **Taro 4.x 跨端框架**，适配 **H5 + 全平台小程序** 多端场景，参考「总体规则」+「源代码」进行代码开发任务，必须遵循「最佳实践」和「设计规范」，在编写各类型文件时，按照「文件编写规范」完成代码任务后，遵循「文档规范」进行文档（README 和 requirement两个文件）的同步。
 
-- 作用范围
-  - 【必须】只开发 src 文件夹下的代码；所有文件路径以 src 为根路径书写，路径中不包含 src 前缀
-    - 正确：pages/index/index.config.ts
-    - 错误：src/pages/index/index.config.ts
-  - 忽略编译、脚手架、构建配置等一切非源码内容，不输出也不讨论
-
+- 技术栈
+  - 核心框架：Taro 4.x（H5 + 多端小程序跨端开发）
+  - 开发语言：React + TypeScript
+  - 样式语言：Less
 - 总体规则
   - 功能：生产级别的功能性；
   - 细节：在每个细节都精心完善；
   - 响应式：保证合理统一的间距，以及支持宽度变化自适应的代码；
-  - 当前每一个设计态画布默认宽度为 414px，可以通过样式文件中使用 :frame { width: 414px } 统一配置画布宽度；
+  - 画布宽度：414px；
+  - 组件的事件注释：任何事件都必须包含注释「/** onXXX:唯一key */」注释；
+  - 忽略编译、脚手架、构建配置等一切非源码内容，不输出也不讨论；
 - 拆分逻辑
-  - 精准识别到底是页面还是弹窗，对其进行拆分。如果是页面，需要在 \`app.config.ts\` 中的 pages 进行配置；如果是 tab 页，需要同时在 \`app.config.ts\` 中的 pages 以及 tabBar.list 中进行配置；如果是弹窗，需要使用 popupRef；
-  - tab 页判断原则：tabBar 代表「多入口并列切换」的导航结构，不是多页面应用的标配。判断标准：
+  - 精准识别到底是页面还是弹窗，对其进行拆分，如果是页面，需要在\`app.config.ts\`中的pages进行配置，如果是tab页，需要同时在\`app.config.ts\`中的pages以及tabBar.list进行配置， 如果是弹窗，需要使用popupRef；
+  - tab页判断原则，tabBar 代表「多入口并列切换」的导航结构，不是多页面应用的标配。判断标准：
     - 需要 tabBar：需求中明确出现多个平级主功能模块可以来回切换（如首页/我的），页面关系是「并列」而非「跳转」；
     - 不需要 tabBar：登录、注册、详情、功能流程等场景，即使包含多个页面，页面间是跳转关系，不是并列切换；
-    - 如果用户明确表达了需要使用 tab 切换页面，即使是上述通常不需要 tabBar 的场景，也以用户需求为准；
+    - 如果用户明确表达了需要使用tab切换页面，即使是登录、注册等上述提到的不需要tabBar判断，也以用户需求为准；
   - 我们特别希望在设计态能够展示所有页面和弹窗，方便用户进行调试；`
 
 /**
 * 资源使用说明
 */
-const assetsUsageSection = `- 对于图标：为了保证视觉的统一与专业性，我们的共识是统一使用图标组件。当图标组件无法表达对应的语义时，再考虑使用图片替代。目前提供的图标库如下：
+const assetsUsageSection = `- 对于图标：为了保证视觉的统一与专业性，我们的共识是统一使用图标组件，当图标组件无法表达对应的语义时考虑使用图片替代。目前提供的图标库如下
   - @nutui/icons-react-taro
   - 组件库没有合适的图标时，才使用 https://api.iconify.design/material-symbols/home.svg?color=%23ff0000&height=32，可配置图标库、图标、颜色、高度等参数，不要全局都使用
   - 禁止使用 emoji
 - 对于图片：图片是传递信息与氛围的关键。我们建议根据其用途选择合适的来源：
-  - 占位图片：例如配置一个橙色背景带白色 hello 文字的色块占位图片，\`https://placehold.co/600x400/orange/ffffff?text=hello\`，注意 text 只能使用英文字符；
-  - 写实图片：例如配置一个高质量的写实图片比如摄影、人文等，\`https://ai.mybricks.world/image-search?term=searchWord&w=20&h=20\`；
-具体来说
-  - 对于各类图片，例如背景图、轮播图等：我们建议使用高质量的写实图片；
-  - 对于Logo：我们建议使用色块占位图片；
+  - https://ai.mybricks.world/image-search?term=searchWord&w=20&h=20，可以配置一个高质量的写实图片（比如摄影、人文等）；
+  具体来说
+  - 对于海报/写实/商品/图片等：我们建议使用高质量的写实图片；
+  - 对于Logo：我们建议使用色块+文本占位；
   - 对于插画/装饰性图形：我们优先推荐使用简单的svg来占位，避免使用图片过于跳脱；`
 
 /**
  * 架构说明
  */
 const architectureSection = `\`\`\`
-├─ app.config.ts          # 模块入口，app配置，有且仅有一个，必须写在根路径，文件名必须为app.config.ts
-├─ app.tsx                # 根组件渲染入口，有且仅有一个，必须写在根路径，文件名必须为app.tsx
+├─ app.config.ts          # 应用入口，app配置，有且仅有一个，必须写在根路径，文件名必须为app.config.ts
+├─ app.tsx                # 应用渲染入口，有且仅有一个，必须写在根路径，文件名必须为app.tsx
 ├─ app.less               # 全局样式（可选）
 ├─ store.ts               # 全局 store（可选）
 ├─ scheme.js    # 接口 scheme （项目唯一文件且必须，而且在dataSource.js和 setup.js之前写入）
-├─ dataSource.js          # 真实接口（项目唯一文件且必须）
-├─ setup.js               # mock接口（项目唯一文件且必须）
+├─ dataSource.ts          # 真实接口（项目唯一文件且必须）
+├─ setup.ts               # mock接口（项目唯一文件且必须）
 ├─ pages                  # 页面
 |  └── index
 |  |  ├── index.tsx
@@ -89,7 +85,7 @@ const architectureSection = `\`\`\`
 3. 禁止编写、使用未实现的事件函数；
 4. 业务逻辑封装在 store 中（例如：登录态校验、数据查询等）；
 5. 组件各类状态控制维护在 store 中（例如：loading、选中态、状态切换等）；
-6. 包含事件props（例如 onClick、onChange、onBlur 等）的标签内必须包含注释「/** 事件名:事件key */」，注释与事件props同级，而不是在事件函数内；
+6. 包含事件props（例如 onClick、onChange、onBlur 等）的标签内必须包含注释「/** onXXX:唯一key */」，注释与事件props同级，而不是在事件函数内；
 7. 对于浮层类组件，如弹窗、抽屉等，控制浮层的显示/打开/弹出/隐藏状态的变量必须维护在 store 中，这类状态禁止设置一个固定的值；
 8. 严格遵守 tsx 语法规范；
 9. 所有来自三方库的组件必须带有 className 属性，值需语义化明确且唯一，无论是否需要样式，以便通过 CSS 选择器选中；
@@ -97,7 +93,47 @@ const architectureSection = `\`\`\`
 11. 各类动效、动画等，尽量使用 css3 的方式在 less 中实现，不要为此引入任何的额外类库；
 12. 禁止出现直接引用标签的写法，例如 \`<Tags[XX] property={'aa'}/>\`，正确的写法是先定义 \`const XX = Tag[XX]; <XX property={'aa'}/>\`；
 13. 所有列表中的组件，必须通过 key 属性做唯一标识，不要使用 index 作为 key；
-14. 项目已启用 CSS Modules，所有样式必须使用 import css from '*.less' 的方式，并通过 css.className 引用
+14. 元素或组件接口调用相关注释：
+  - 说明：调用接口即调用 datasource 提供的api
+  - 判断依据：
+    1. 当 JSX 标签内事件直接或间接调用 datasource 提供的api时，添加注释
+  - 注释格式：「/** datasource:唯一key */」，key必须全局唯一
+  - 示例：\`<Button /** datasource:clickToLogin */ onClick={() => store.login()}>登录</Button>\`
+  - 注意：
+    1. 当接口调用在函数体或 React hooks（如 useEffect）内时，禁止编写注释
+15. 元素或组件消费、使用 store 数据相关注释：
+  - 判断依据：
+    1. 当 JSX 内使用 store 数据时，添加注释
+  - 注释格式：「/** store:唯一key */」，key必须全局唯一
+  - 示例：
+    1. 简单引用
+    \`\`\`jsx
+    <View /** store:userName */>{store.user.name}</View>
+    \`\`\`
+
+    2. 间接引用或消费一个对象下的多个深层字段时
+    \`\`\`jsx
+    <View /** store:userCard */>
+      <View>{store.user.name}</View>
+      <View>{store.user.age}</View>
+    </View>
+    \`\`\`
+    \`\`\`jsx
+    const { user } = store
+    <View /** store:userCard */>
+      <View>{user.name}</View>
+      <View>{user.age}</View>
+    </View>
+    \`\`\`
+
+    3. 数组遍历渲染
+    \`\`\`
+    <View /** store:userList */>{store.users.map(user => <View key={user.id}>{user.name}</View>)}</View>
+    \`\`\`
+  - 注意：
+    1. 当没有合适的JSX标签编写注释时，通常可能是外层使用空标签\`<>\`或\`<Fragment>\`，此时不需要写注释
+    2. 当外层容器和内部子元素消费同一个store字段时，应将注释写在最外层容器上，避免重复注释
+16. 项目已启用 CSS Modules，所有样式必须使用 import css from '*.less' 的方式，并通过 css.className 引用
 
 保留字段（禁止通过 props 传递）：
 - \`_env\`：环境变量，\`_env.mode\` 表示运行环境（design | runtime）；
@@ -153,7 +189,7 @@ PopupVisible 装饰器说明：
 - 禁止使用 getter 方法（例如：get count() {...}）；
 - 除 makeAutoObservable 调用外，任何数据初始化动作都不允许写在 constructor 内；
 - 禁止在 React 函数组件内直接调用 store 的数据初始化方法（如 store.init()、store.fetchData() 等），这会在每次渲染时重复执行，极易导致死循环；如需初始化，必须放在 useEffect 内执行；
-- store.ts 是纯 TypeScript 文件，禁止出现任何 JSX 语法（例如 <Icon />、<div> 等标签），也禁止从任何 UI 组件库引入 JSX 组件并作为字段值存储；
+- store.ts 是纯 TypeScript 文件，禁止出现任何 JSX 语法（例如 <Icon />、<View> 等标签），也禁止从任何 UI 组件库引入 JSX 组件并作为字段值存储；
 - store.ts 是 setup.ts和 dataSource.ts的逻辑中转站，编排逻辑时要考虑两者的关系，避免逻辑不一致导致的非必要重新编排
 
 #### 日志规范
@@ -171,9 +207,6 @@ PopupVisible 装饰器说明：
 - 日志消息应包含上下文前缀，便于定位来源，格式推荐：\`[组件名/方法名] 具体描述\`；
 - 示例：\`logger.info('[UserList/fetchUsers] 开始请求用户列表', { page: 1 })\`；
 - 错误日志必须携带 error 对象：\`logger.error('[Store/loadData] 数据加载失败', error)\`；
-
-#### 区块拆分原则与规范
-区块拆分的核心目标是：代码清晰可维护、逻辑内聚、减少不必要的文件碎片。必须同时兼顾「编程视角」（复用性、状态独立性、逻辑复杂度）和「视觉模块」（视觉上可独立识别的功能区域），二者缺一不可。
 
 重复结构处理：当一个区块内存在多个「结构相同、仅数据不同」的重复单元时，必须拆成「容器 + 单项」两层：
 - 容器（comRef）：负责布局与数据遍历，用 map 渲染单项；
@@ -193,7 +226,6 @@ PopupVisible 装饰器说明：
 - 后端返回了新的真实接口定义、字段结构、业务约束或接口映射关系时，必须立即同步更新；
 - \`scheme.js\`、\`dataSource.js\`、\`setup.js\` 任一文件发生接口相关变更时，必须检查其余两个文件是否需要同步更新；
 - 页面功能与接口绑定关系发生变化时，必须同步更新接口使用说明和对应实现；
-
 `
 
 /**
