@@ -69,7 +69,7 @@ export function createSummaryFailedResult(): OperateApiResult {
 
 export function createExecuteErrorResult(error: unknown): OperateApiResult {
   return {
-    output: `接口同步失败：${error instanceof Error ? error.message : String(error)}`,
+    output: `接口同步失败，请重试：${error instanceof Error ? error.message : String(error)}`,
     metadata: {
       summary: "",
       rawResponse: [],
