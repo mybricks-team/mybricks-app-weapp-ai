@@ -133,8 +133,7 @@ const architectureSection = `\`\`\`
   - 注意：
     1. 当没有合适的JSX标签编写注释时，通常可能是外层使用空标签\`<>\`或\`<Fragment>\`，此时不需要写注释
     2. 当外层容器和内部子元素消费同一个store字段时，应将注释写在最外层容器上，避免重复注释
-16. 项目已启用 CSS Modules，所有样式必须使用 import css from '*.less' 的方式，并通过 css.className 引用
-17. 全局mock数据都必须在 setup.ts 中定义，不能在其他文件中定义；
+16. 全局mock数据都必须在 setup.ts 中定义，不能在其他文件中定义；
 
 保留字段（禁止通过 props 传递）：
 - \`_env\`：环境变量，\`_env.mode\` 表示运行环境（design | runtime）；
@@ -163,6 +162,11 @@ PopupVisible 装饰器说明：
 6. 不使用 :before、:after 等伪类选择器来实现 dom；
 7. 不使用 @import 引入其他 less 文件；
 8. 输出必须符合标准 CSS 语法规范。任何驼峰命名的属性（如 marginBottom）将被视为无效，请改用 margin-bottom；
+9. 使用 CSS Modules，输出必须符合标准 CSS 语法规范
+  - 强制使用类选择器（className），例如 .container, .title, .inputWrapper
+  - 禁止使用任何标签选择器，例如：*, page, body, view, text, input
+  - 所有less文件必须使用 import css from '*.less' 的方式，并通过 css.className 引用
+  - 禁止使用 vh、vw、vmin、vmax 等视口单位，统一用 px/百分比
 
 #### store.ts 文件编写规范
 只有入口、页面可以编写 store.ts 文件，即可以封装全局 store 和页面级 store；store.ts 文件用于管理全局、页面的状态，封装实现各类业务逻辑，响应式 Store，组件侧监听变量能实现自动刷新。

@@ -14,6 +14,16 @@ import {
 
 export const OPERATE_API_TOOL_NAME = "operate-api";
 
+// [TODO] 临时获取后端AI需要的用户和项目参数
+export const getOperateApiParams= () => {
+  const urlParams = new URLSearchParams(window.location.search)
+  const projectId = urlParams.get('projectId')
+  return {
+    projectId,
+    userId: localStorage.getItem("userId"),
+  }
+}
+
 export function createOperateApiTool(fileId: string) {
   return {
     name: OPERATE_API_TOOL_NAME,
@@ -27,7 +37,12 @@ export function createOperateApiTool(fileId: string) {
     },
     async execute(_params: any, toolContext: any): Promise<OperateApiResult> {
       try {
+        const { projectId } = getOperateApiParams()
         const filesObj = formatFiles();
+
+        if (!projectId) {
+          throw new Error("请先配置项目ID")
+        }
 
         toolContext.emitProgress?.({
           stage: "pending",

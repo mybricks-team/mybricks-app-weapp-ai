@@ -1,7 +1,7 @@
 import { createRequest } from "../request";
+import { getOperateApiParams } from "./index";
 
 const API_URL = "/biz/v2/ai/checkApiSchemes";
-const MYBRICKS_GROUP_ID = "816814702252101";
 
 /**
  * 前端后scheme是否一致
@@ -16,6 +16,7 @@ export async function checkState( apiSchemes: any[], fileId: string): Promise<bo
     body: {
         apiSchemes,
         sessionId: fileId,
+        ...getOperateApiParams(),
     },
   });
   const response = await request();
