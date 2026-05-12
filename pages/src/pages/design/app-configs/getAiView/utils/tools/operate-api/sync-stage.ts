@@ -1,8 +1,8 @@
 import CodeFiles from "../codeFiles";
 import { createRequestStream } from "../request";
+import { getOperateApiParams } from "./index";
 
 const API_URL = "/biz/v2/ai/batchGenerateModuleStream";
-const MYBRICKS_GROUP_ID = "816814702252101";
 
 const FILE_WHITELIST = [
   "dataSource.ts",
@@ -112,9 +112,9 @@ export async function syncState(fileId: string, content: string, filesObj: Files
       method: "POST",
       body: {
         summary: content,
-        mybricksGroupId: MYBRICKS_GROUP_ID,
         sessionId: fileId,
         ...filesObj,
+        ...getOperateApiParams(),
       },
     });
 
