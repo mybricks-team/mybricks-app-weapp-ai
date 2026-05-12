@@ -114,12 +114,41 @@
       .ant-btn {
         height: 24px;
         padding: 0px 10px;
+        font-size: 12px;
         font-weight: 500;
+        line-height: 22px;
+        border-width: 1px;
+        border-style: solid;
+        border-radius: 6px;
+        box-shadow: none;
       }
 
-      .ant-btn:hover,
-      .ant-btn:active {
+      .ant-btn-default {
+        color: var(--mybricks-text-color-main, #333);
+        border-color: var(--mybricks-border-color-main, #E6E6E6);
+        background: var(--mybricks-bg-color-main, #FFF);
+      }
+
+      .ant-btn-default:hover,
+      .ant-btn-default:active {
         color: var(--mybricks-color-primary);
+        border-color: var(--mybricks-color-primary);
+        background: var(--mybricks-bg-color-main, #FFF);
+      }
+
+      .ant-btn-primary,
+      .ant-btn-primary:not([disabled]) {
+        color: var(--gray-1, #fff);
+        border-color: var(--mybricks-color-primary);
+        background: var(--mybricks-color-primary);
+        text-shadow: none;
+      }
+
+      .ant-btn-primary:hover,
+      .ant-btn-primary:active {
+        color: var(--gray-1, #fff);
+        border-color: var(--mybricks-color-primary);
+        background: var(--mybricks-color-primary);
       }
 
       .ant-btn-icon-only.ant-btn-sm {

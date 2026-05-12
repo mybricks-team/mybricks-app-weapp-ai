@@ -55,9 +55,8 @@ import classNames from 'classnames'
 import { sendPageDeps } from './utils/sendPageDeps'
 import { BranchMergeModal } from './components/branch-merge-modal'
 import { useBranch } from './hooks/useBranch'
-import Titlebar from './components/Titlebar'
-import Toolbar2, { type TitlebarRef } from './components/Toolbar'
-import { DesignerTitleBar, DesignerToolBar } from '@mybricks/sdk-for-app/ui'
+import Titlebar, { type TitlebarRef as LocalTitlebarRef } from './components/Titlebar'
+import Toolbar2, { type TitlebarRef as LocalToolbarRef } from './components/Toolbar'
 import { getAiComParams, exportCode, generateExportFiles } from './components/code-export'
 
 const msgSaveKey = 'save'
@@ -74,8 +73,8 @@ const getAppSetting = async () => {
 }
 
 export default function MyDesigner({ appData: originAppData }) {
-  const toolbarRef = useRef()
-  const titleRef = useRef()
+  const toolbarRef = useRef<LocalToolbarRef | null>(null)
+  const titleRef = useRef<LocalTitlebarRef | null>(null)
   window.fileId = originAppData.fileId
   window._disableSmartLayout = originAppData?.config?.['mybricks-app-pcspa']?.config?.feature?.disableSmartLayout; // 是否禁用智能布局
 
@@ -1085,15 +1084,15 @@ export default function MyDesigner({ appData: originAppData }) {
             ref={designerRef}
             titlebar={() => {
               return (
-                <DesignerTitleBar
+                <Titlebar
                   ref={titleRef}
-                  appData={appData}
+                  title={appData?.fileContent?.name}
                 />
               )
             }}
             toolbar={() => {
               return (
-                <DesignerToolBar
+                <Toolbar2
                   ref={toolbarRef}
                   appData={appData}
                   beforeToggleUnLock={beforeToggleUnLock}
@@ -1102,14 +1101,10 @@ export default function MyDesigner({ appData: originAppData }) {
                     ctx.operable = operable
                   }}
                   onSave={save}
-                  moreActions={
-                    [
-                      {
-                        title: '导出',
-                        onClick: handleExport,
-                      }
-                    ]
-                  }
+                  downloadVibeUI={handleExport}
+                  getExportToJSON={() => {
+                    return designerRef.current.toJSON()
+                  }}
                 />
               )
             }}

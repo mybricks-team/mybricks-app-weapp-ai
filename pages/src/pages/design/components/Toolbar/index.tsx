@@ -115,13 +115,10 @@ const ToolBar = forwardRef<TitlebarRef, ToolbarProps>((props, ref) =>{
             {/* <CodeExportButton
               getExportToJSON={getExportToJSON}
             /> */}
-            <div
-              data-mybricks-tip={`{content:'在 IDE 中打开',position:'bottom'}`}
-              className={styles['code_btn']}
-              onClick={() => downloadVibeUI()}
-            >
-              {code}
-            </div>
+
+            <Button onClick={() => downloadVibeUI()}>
+            导出
+            </Button>
           </div>
         </div>
         <SaveTimeDisplay savedTime={savedTime}/>

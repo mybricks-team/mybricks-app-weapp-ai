@@ -1,6 +1,7 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useImperativeHandle, useState } from 'react'
 import { themeConfig } from '../../common/const'
 import { useTheme } from '../../hooks/useTheme'
+import { webIcon } from '../../icon/web-icon'
 import styles from './index.less'
 
 interface ToolbarProps {
@@ -20,8 +21,15 @@ export interface TitlebarRef {
 }
 
 const Titlebar = forwardRef<TitlebarRef, ToolbarProps>(
-  ({ title }) => {
-    const { isDarkMode, currentAssets } = useTheme(themeConfig)
+  ({ title = '' }, ref) => {
+    const { isDarkMode } = useTheme(themeConfig)
+    const [innerTitle, setInnerTitle] = useState(title)
+
+    useImperativeHandle(ref, () => {
+      return {
+        setTitle: setInnerTitle,
+      }
+    })
 
     const handleToHome = async () => {
       window.top.location.href = '/'
@@ -37,11 +45,9 @@ const Titlebar = forwardRef<TitlebarRef, ToolbarProps>(
         >
           <div className={styles['brand-icon-wrap']}>
             <div className={styles['user-info']}>
-              <img
-                src={currentAssets.logo}
-                alt=""
-                style={{ width: 16, height: 16 }}
-              />
+              <span style={{ width: 16, height: 16, display: 'inline-flex' }}>
+                {webIcon}
+              </span>
             </div>
           </div>
         </div>
@@ -50,7 +56,7 @@ const Titlebar = forwardRef<TitlebarRef, ToolbarProps>(
             style={{ cursor: 'default' }}
             className={`${styles['page-slogan-title']} ${isDarkMode ? styles['page-slogan-title-dark'] : ''}`}
           >
-            {title}
+            {innerTitle}
           </span>
         </div>
       </div>
