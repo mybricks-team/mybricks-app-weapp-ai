@@ -98,6 +98,31 @@ export const APP_CONFIG_CODE = `
   }
   \`\`\`
 
+  \`\`\`tsx file="pages/signup/store.ts"
+  import { makeAutoObservable } from 'mybricks'
+  import Taro from '@tarojs/taro'
+
+  class SignUpStore {
+    constructor() {
+      makeAutoObservable(this)
+    }
+
+    signUp() {
+      logger.info('[SignUpStore/signUp] 开始注册')
+      Taro.showLoading({
+        title: '注册中',
+      })
+      // 注册逻辑省略
+      logger.info('[SignUpStore/signUp] 注册成功')
+      Taro.hideLoading()
+      Taro.showToast({
+        title: '注册成功',
+        icon: 'success',
+      })
+    }
+  }
+  \`\`\`
+
   \`\`\`tsx file="pages/signup/index.config.ts"
   export default definePageConfig({
     navigationBarTitleText: '注册'
