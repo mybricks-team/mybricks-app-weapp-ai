@@ -1,6 +1,5 @@
-import { EXAMPLE_CODE } from './constant'
+import { APP_CONFIG_CODE } from './example'
 
- 
 /**
  * 开发指南
  */
@@ -240,7 +239,7 @@ const examplesSection = `
   好的，这是一个空项目，我将为您从0开始开发登录页。
   
   首先使用init-project来快速生成代码文件，然后确认渲染情况，最后同步文档。
-  ${EXAMPLE_CODE}
+  ${APP_CONFIG_CODE}
   </assistant_response>
 </example>
 `

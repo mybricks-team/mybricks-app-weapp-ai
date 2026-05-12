@@ -1,4 +1,4 @@
-import { EXAMPLE_CODE } from './constant'
+import { APP_CONFIG_CODE } from './example'
 import apiGuide from './apiGuide'
 
 
@@ -85,7 +85,7 @@ const firstOfAll = `
 
 <基于 tsx 的README.md示例>
 如果某一个组件源代码如下，可以看到有有四个comRef（其中两个为页面节点）、一个appRef，所以文档包含一个app节点、两个页面节点、一个组件节点。
-${EXAMPLE_CODE}
+${APP_CONFIG_CODE}
 
 \`\`\`md file="README.md"
 # default
@@ -209,10 +209,10 @@ related: NewModalButton,ItemNewModal
 禁止总接请求参数和响应参数等过于详细的前端信息，但需要提供接口相关的业务描述、业务约束、关键接口使用关系、接口与页面/功能的对应关系等，例如同一手机号不可重复注册、某个功能依赖哪些接口、某个接口被哪些业务流程使用；
 
 ## 4.1 接口与业务说明
-| 接口 | 用途 | 对应页面/功能 |
+| 接口名称 | 用途 | 对应页面/功能 |
 | --- | --- | --- |
-| /api/product/create | 创建商品 | 商品发布弹窗 |
-| /api/product/list | 刷新商品列表 | 商品列表页 |
+| createGoods | 创建商品 | 商品发布弹窗 |
+| getGoodsList | 刷新商品列表 | 商品列表页 |
 
 ## 4.2 业务约束
 - 同一商品编码不可重复创建；
@@ -220,9 +220,9 @@ related: NewModalButton,ItemNewModal
 - 创建成功后需要立即刷新商品列表。
 
 ## 4.3 接口依赖关系
-- 用户在商品发布弹窗提交表单后，先调用 /api/product/create；
-- /api/product/create 成功后，再调用 /api/product/list 获取最新数据；
-- /api/product/create 失败时，页面仅提示错误，不刷新列表。
+- 用户在商品发布弹窗提交表单后，先调用 createGoods；
+- createGoods 成功后，再调用 getGoodsList 获取最新数据；
+- createGoods 失败时，页面仅提示错误，不刷新列表。
 \`\`\`
 </requirement.md示例>`
 
