@@ -1,6 +1,4 @@
 
-import { OPERATE_API_TOOL_NAME } from '../tools/operate-api/index'
-
 const EDIT_TOOL_NAME = 'edit_file'
 const WRITE_TOOL_NAME = 'write_file'
 const MULTI_EDIT_TOOL_NAME = "multi_edit";
@@ -55,14 +53,6 @@ const usingToolsSection  = `# 工具使用
     - 如果一切正常并且渲染数量也是正常的，则进入下一个阶段；
 4. 最后进入文档同步阶段
   - 检查文档是否需要更新，特别是README.md 和 requirement.md），如果要修改，则进行修改。文档的修改决策和思路基于后续提供的「文档规范」章节。
-5. 接口同步（仅在用户明确要求时执行）
-  - 只有当用户明确要求"同步接口"、"操作接口"、"生成真实接口"等类似表述时，才调用 \`${OPERATE_API_TOOL_NAME}\` 工具。
-  - 如果用户没有明确要求，即使修改了 scheme.ts、dataSource.ts、setup.ts，也不要主动调用 \`${OPERATE_API_TOOL_NAME}\`。
-  - 当 \`${OPERATE_API_TOOL_NAME}\` 返回成功时：
-    1. 使用 \`${WRITE_TOOL_NAME}\` 将工具返回的完整内容覆盖写入 scheme.ts（不得使用 \`${EDIT_TOOL_NAME}\`，不得改写、删减、重排字段）；
-    2. 写入完成后，必须再次调用 \`${OPERATE_API_TOOL_NAME}\` 进行真实性校验，由接口来判断 scheme.ts 是否与后端一致：
-      - 若再次触发同步，表示写入存在漂移，继续执行同步流程直到校验通过；
-    3. 校验通过后，再基于最新 scheme.ts 同步 dataSource.ts 和 setup.ts，完成后流程结束，等待用户的下一步指令。
 </常用工作流>
 
 <并行调用工具原则：必须遵守>

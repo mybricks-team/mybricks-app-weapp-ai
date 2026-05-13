@@ -1,6 +1,4 @@
 import { APP_CONFIG_CODE } from './example'
-import apiGuide from './apiGuide'
-
 
 const firstOfAll = `
 ### README.md
@@ -148,8 +146,6 @@ ${APP_CONFIG_CODE}
 
 \`\`\`
 </基于 tsx 的README.md示例>
-
-${apiGuide.firstOfAll}
 `
 
 const requirementGuide = `<requirement.md 文档编写规范>
@@ -204,25 +200,6 @@ type: new
 related: NewModalButton,ItemNewModal
 ...
 
-# 四、后端协作信息
-
-禁止总接请求参数和响应参数等过于详细的前端信息，但需要提供接口相关的业务描述、业务约束、关键接口使用关系、接口与页面/功能的对应关系等，例如同一手机号不可重复注册、某个功能依赖哪些接口、某个接口被哪些业务流程使用；
-
-## 4.1 接口与业务说明
-| 接口名称 | 用途 | 对应页面/功能 |
-| --- | --- | --- |
-| createGoods | 创建商品 | 商品发布弹窗 |
-| getGoodsList | 刷新商品列表 | 商品列表页 |
-
-## 4.2 业务约束
-- 同一商品编码不可重复创建；
-- 商品发布前必须完成必填字段校验；
-- 创建成功后需要立即刷新商品列表。
-
-## 4.3 接口依赖关系
-- 用户在商品发布弹窗提交表单后，先调用 createGoods；
-- createGoods 成功后，再调用 getGoodsList 获取最新数据；
-- createGoods 失败时，页面仅提示错误，不刷新列表。
 \`\`\`
 </requirement.md示例>`
 

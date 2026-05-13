@@ -48,7 +48,6 @@ const architectureSection = `\`\`\`
 ├─ app.tsx                # 应用渲染入口，有且仅有一个，必须写在根路径，文件名必须为app.tsx
 ├─ app.less               # 全局样式（可选）
 ├─ store.ts               # 全局 store（可选）
-├─ scheme.ts              # 接口 scheme （项目唯一文件且必须，而且在dataSource.ts和 setup.ts之前写入）
 ├─ dataSource.ts          # 真实接口（项目唯一文件且必须）
 ├─ setup.ts               # mock接口（项目唯一文件且必须）
 ├─ pages                  # 页面
@@ -133,7 +132,6 @@ const architectureSection = `\`\`\`
   - 注意：
     1. 当没有合适的JSX标签编写注释时，通常可能是外层使用空标签\`<>\`或\`<Fragment>\`，此时不需要写注释
     2. 当外层容器和内部子元素消费同一个store字段时，应将注释写在最外层容器上，避免重复注释
-16. 全局mock数据都必须在 setup.ts 中定义，不能在其他文件中定义；
 
 保留字段（禁止通过 props 传递）：
 - \`_env\`：环境变量，\`_env.mode\` 表示运行环境（design | runtime）；
@@ -223,13 +221,13 @@ PopupVisible 装饰器说明：
 - 区块独立性：父组件只负责布局与子区块挂载，不向子区块传递 value、onChange、onClick 等受控属性；子区块自行从 store 读数据并调用 store 方法；
 
 ### 接口操作规范
-- \`scheme.ts\` 是 \`dataSource.ts\` 和 \`setup.ts\` 的接口约束基准，三者必须保持一致。
+当前项目是静态数据场景，\`dataSource.ts\` 中不需要使用 \`this.axios\` 请求接口，直接返回静态数据。
+
+- \`dataSource.ts\` 和 \`setup.ts\` 是项目的接口和mock数据，二者必须保持一致。
 
 更新时机：
 - 用户新增、删除或修改了接口相关功能时，必须同步更新；
-- 后端返回了新的真实接口定义、字段结构、业务约束或接口映射关系时，必须立即同步更新；
-- \`scheme.ts\`、\`dataSource.ts\`、\`setup.ts\` 任一文件发生接口相关变更时，必须检查其余两个文件是否需要同步更新；
-- 页面功能与接口绑定关系发生变化时，必须同步更新接口使用说明和对应实现；
+- \`dataSource.ts\`、\`setup.ts\` 任一文件发生接口相关变更时，必须检查另一个文件是否需要同步更新；
 `
 
 /**
