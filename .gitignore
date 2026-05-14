@@ -53,3 +53,5 @@ nodejs/module/public
 taro-template.json
 dist
 lib
+
+@tarojs
