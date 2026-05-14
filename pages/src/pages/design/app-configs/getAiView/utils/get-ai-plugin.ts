@@ -12,7 +12,7 @@ export default ({ user, key }: any) => {
       providers: [
         {
           format: "openai",
-          providerId: "kimi",
+          providerId: "manateeai",
           baseUrl: "https://new-api.manateeai.com/v1/chat/completions",
           apiKey: "sk-8M0pxwcucVOECOFhB470Ea9d09444882A8A955F5863194E8",
           models: [
@@ -25,12 +25,11 @@ export default ({ user, key }: any) => {
               name: "deepseek-v4-flash",
             },
             {
-              id: "claude-sonnet-4-6",
-              name: "claude-sonnet-4-6",
+              id: "deepseek-v4-pro",
+              name: "deepseek-v4-pro",
             },
-            
           ],
-        },
+        }
       ],
     },
     skills,
