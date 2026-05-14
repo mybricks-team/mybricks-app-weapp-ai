@@ -43,13 +43,13 @@ const Titlebar = forwardRef<TitlebarRef, ToolbarProps>(
           className={styles['brand']}
           onClick={handleToHome}
         >
-          <div className={styles['brand-icon-wrap']}>
+          {/* <div className={styles['brand-icon-wrap']}>
             <div className={styles['user-info']}>
               <span style={{ width: 16, height: 16, display: 'inline-flex' }}>
                 {webIcon}
               </span>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className={styles['edit-title-wrap']}>
           <span

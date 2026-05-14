@@ -12,21 +12,13 @@ export default ({ user, key }: any) => {
       providers: [
         {
           format: "openai",
-          providerId: "manateeai",
-          baseUrl: "https://new-api.manateeai.com/v1/chat/completions",
-          apiKey: "sk-8M0pxwcucVOECOFhB470Ea9d09444882A8A955F5863194E8",
+          providerId: "moonshot",
+          baseUrl: "https://api.moonshot.cn/v1/chat/completions",
+          apiKey: "sk-NAsSLjFQu5iRlJG7apUD6ZKMxCPS5RyS1EkJKX0ryXJEcj7n",
           models: [
             {
               id: "kimi-k2.6",
               name: "Kimi-K2.6",
-            },
-            {
-              id: "deepseek-v4-flash",
-              name: "deepseek-v4-flash",
-            },
-            {
-              id: "deepseek-v4-pro",
-              name: "deepseek-v4-pro",
             },
           ],
         }
