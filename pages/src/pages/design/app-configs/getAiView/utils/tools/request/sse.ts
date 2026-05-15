@@ -58,13 +58,13 @@ export async function readSSEStream(opts: ReadSSEStreamOptions): Promise<void> {
       return true;
     }
 
-    if (currentEvent === "message" && currentData) {
+    if ((currentEvent === "message" || currentEvent === "step") && currentData) {
       const parsed = parseCustomSSEData(currentData);
       if (parsed.error) {
         error(new Error(parsed.error));
         throw new Error(parsed.error);
       }
-      if (parsed.content) write(parsed.content);
+      if (currentEvent === "message" && parsed.content) write(parsed.content);
       if (parsed.thinking && onThinking) onThinking(parsed.thinking);
     }
 

@@ -111,7 +111,67 @@
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+
+.code-card-section {
+  padding: 8px 10px;
+  border-top: 1px solid var(--mybricks-border-color-main, #E6E6E6);
+}
+
+.code-card-section-title {
+  font-size: 11px;
+  color: var(--mybricks-text-color-main, #333);
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+
+.code-card-api-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.code-card-api-item {
+  padding: 8px;
+  border-radius: 4px;
+  background: var(--mybricks-bg-color-main, #FFF);
+  border: 1px solid var(--mybricks-border-color-main, #E6E6E6);
+}
+
+.code-card-api-main {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.code-card-api-cn-name {
+  font-size: 12px;
+  color: var(--mybricks-text-color-main, #333);
+}
+
+.code-card-api-index {
+  font-size: 12px;
+  color: var(--mybricks-text-color-main, #333);
+  opacity: 0.7;
+}
+
+.code-card-api-name {
+  font-size: 11px;
+  color: var(--mybricks-text-color-main, #333);
+  opacity: 0.6;
+}
+
+.code-card-api-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--mybricks-text-color-main, #333);
+  opacity: 0.7;
+  flex-wrap: wrap;
+}
+
+.code-card-api-path {
+  font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
 }

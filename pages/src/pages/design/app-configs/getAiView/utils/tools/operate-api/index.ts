@@ -4,10 +4,8 @@ import { getOperateApiSummary } from "./summary-state";
 
 import { syncState, formatFiles } from "./sync-stage";
 import {
-  createExecuteErrorResult,
   createNoNeedSyncResult,
   createSummaryFailedResult,
-  createVerifyFailResult,
   createVerifySuccessResult,
   type OperateApiResult,
 } from "./result";
@@ -27,7 +25,7 @@ export const getOperateApiParams= () => {
 export function createOperateApiTool(fileId: string) {
   return {
     name: OPERATE_API_TOOL_NAME,
-    title: "操作接口",
+    title: "同步接口",
     description:
       "根据当前用户需求先整理接口变更记录，根据当前用户需求请求后端服务，操作接口，保持前后端的一致性。",
     render: renderOperateApiTool,
@@ -73,23 +71,36 @@ export function createOperateApiTool(fileId: string) {
           return createSummaryFailedResult();
         }
 
-        toolContext.emitProgress?.({
-          stage: "pending",
-          message: reusedSummary ? "正在同步接口（复用上次变更记录）" : "正在同步接口",
-        });
+        let progressMessage = reusedSummary ? "开始生成（复用上次变更记录）" : "开始生成";
+        const progressiveItems: any[] = [];
+        const emitPendingProgress = () => {
+          toolContext.emitProgress?.({
+            stage: "pending",
+            message: progressMessage,
+            items: [...progressiveItems],
+          });
+        };
 
-        const result = await syncState(fileId, summary, filesObj);
+        emitPendingProgress();
+
+        const result = await syncState(fileId, summary, filesObj, {
+          onThinking: (chunk: string) => {
+            progressMessage = chunk;
+            emitPendingProgress();
+          },
+          onItem: (item) => {
+            progressiveItems.push(item);
+            console.log("[operate-api:onItem]", {
+              time: Date.now(),
+              count: progressiveItems.length,
+              item,
+            });
+            emitPendingProgress();
+          },
+        });
         console.log('=====result', result)
         if (!Array.isArray(result.rawResponse) || result.rawResponse.length === 0) {
-          toolContext.emitProgress?.({
-            stage: "error",
-            message: "接口同步完成，但后端未返回有效接口数据，请重试",
-          });
-          return createVerifyFailResult({
-            summary,
-            rawResponse: result.rawResponse,
-            reusedSummary,
-          });
+          throw new Error("接口同步完成，但后端未返回有效接口数据，请重试");
         }
 
         toolContext.emitProgress?.({
@@ -104,12 +115,7 @@ export function createOperateApiTool(fileId: string) {
           reusedSummary,
         });
       } catch (error) {
-        toolContext.emitProgress?.({
-          stage: "error",
-          message: `接口同步失败：${error instanceof Error ? error.message : String(error)}`,
-        });
-
-        return createExecuteErrorResult(error);
+        throw error instanceof Error ? error : new Error(String(error));
       }
     },
   };

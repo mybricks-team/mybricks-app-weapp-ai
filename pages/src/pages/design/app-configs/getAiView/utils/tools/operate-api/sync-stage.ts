@@ -102,10 +102,101 @@ function parseResponse(raw: any) {
   return raw;
 }
 
-export async function syncState(fileId: string, content: string, filesObj: FilesResult): Promise<SyncStageResult> {
+type SyncStageOptions = {
+  onThinking?: (chunk: string) => void;
+  onItem?: (item: ApiDocItem) => void;
+};
+
+function createProgressiveJSONArrayParser<T>(options: {
+  onItem: (item: T) => void;
+}) {
+  let started = false;
+  let inString = false;
+  let escaped = false;
+  let braceDepth = 0;
+  let objectBuffer = "";
+
+  const emitCurrentObject = () => {
+    const text = objectBuffer.trim();
+    objectBuffer = "";
+    if (!text) return;
+    try {
+      options.onItem(JSON.parse(text) as T);
+    } catch {
+      // ignore incomplete or invalid partial object
+    }
+  };
+
+  return {
+    push(chunk: string) {
+      for (const char of chunk) {
+        if (!started) {
+          if (char === "[") {
+            started = true;
+          }
+          continue;
+        }
+
+        if (braceDepth === 0) {
+          if (char === "{") {
+            braceDepth = 1;
+            objectBuffer = "{";
+            inString = false;
+            escaped = false;
+          }
+          continue;
+        }
+
+        objectBuffer += char;
+
+        if (escaped) {
+          escaped = false;
+          continue;
+        }
+
+        if (char === "\\") {
+          escaped = true;
+          continue;
+        }
+
+        if (char === '"') {
+          inString = !inString;
+          continue;
+        }
+
+        if (!inString) {
+          if (char === "{") {
+            braceDepth += 1;
+            continue;
+          }
+          if (char === "}") {
+            braceDepth -= 1;
+            if (braceDepth === 0) {
+              emitCurrentObject();
+            }
+          }
+        }
+      }
+    },
+  };
+}
+
+export async function syncState(
+  fileId: string,
+  content: string,
+  filesObj: FilesResult,
+  options: SyncStageOptions = {}
+): Promise<SyncStageResult> {
 
   return new Promise<SyncStageResult>((resolve, reject) => {
     let accumulated = "";
+    const progressiveItems: ApiDocItem[] = [];
+    const parser = createProgressiveJSONArrayParser<ApiDocItem>({
+      onItem: (item) => {
+        progressiveItems.push(item);
+        options.onItem?.(item);
+      },
+    });
 
     const requestStream = createRequestStream({
       url: API_URL,
@@ -121,14 +212,32 @@ export async function syncState(fileId: string, content: string, filesObj: Files
     requestStream({
       emits: {
         write: (chunk) => {
+          console.log("[operate-api:write]", {
+            time: Date.now(),
+            length: chunk.length,
+            chunk,
+          });
           accumulated += chunk;
+          parser.push(chunk);
         },
         complete: () => {
-          const rawResponse = parseResponse(accumulated);
+          const parsedResponse = parseResponse(accumulated);
+          const rawResponse = Array.isArray(parsedResponse)
+            ? parsedResponse
+            : progressiveItems.length > 0
+              ? progressiveItems
+              : parsedResponse;
           resolve({
             rawResponse,
             output: summarizeApiDocs(rawResponse),
           });
+        },
+        onThinking: (chunk) => {
+          console.log("[sync-stage:onThinking]", {
+            time: Date.now(),
+            chunk,
+          });
+          options.onThinking?.(chunk);
         },
         error: reject,
         cancel: () => {},

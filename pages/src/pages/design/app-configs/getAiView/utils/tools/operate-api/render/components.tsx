@@ -11,9 +11,17 @@ export interface ToolRecord {
   status: ToolStatus;
   args?: Record<string, any>;
   result?: { output?: string; [key: string]: any };
-  progress?: { message?: string };
+  progress?: { message?: string; items?: ApiListItem[] };
   execStartTime?: number;
   execEndTime?: number;
+}
+
+export interface ApiListItem {
+  id?: string | number;
+  cnName?: string;
+  name?: string;
+  method?: string;
+  path?: string;
 }
 
 // ─── 图标 ────────────────────────────────────────────────────────────────────
@@ -91,6 +99,26 @@ const TextShimmer = ({ children }: { children: string }) => (
 
 // ─── PendingCodeCard ─────────────────────────────────────────────────────────
 
+const ApiListSection = ({ apiList }: { apiList: ApiListItem[] }) => {
+  if (apiList.length === 0) return null;
+
+  return (
+    <div className={css["code-card-section"]}>
+      <div className={css["code-card-api-list"]}>
+        {apiList.map((item, index) => (
+          <div key={item.id ?? `${item.name ?? 'api'}-${index}`} className={css["code-card-api-item"]}>
+            <div className={css["code-card-api-main"]}>
+              <span className={css["code-card-api-index"]}>{index + 1}.</span>
+              <span className={css["code-card-api-cn-name"]}>{item.cnName || "未命名接口"}</span>
+              {item.name && <span className={css["code-card-api-name"]}>{item.name}</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export const PendingCodeCard = ({ tool, icon, title }: { tool: ToolRecord; icon: React.ReactElement; title: string }) => (
   <div className={css["code-card"]}>
     <div className={css["code-card-header"]}>
@@ -98,6 +126,7 @@ export const PendingCodeCard = ({ tool, icon, title }: { tool: ToolRecord; icon:
       <span className={css["code-card-filename"]}><TextShimmer>{title}</TextShimmer></span>
       <Duration tool={tool} />
     </div>
+    <ApiListSection apiList={tool.progress?.items || []} />
   </div>
 );
 
@@ -107,40 +136,18 @@ export interface CodeCardProps {
   tool: ToolRecord;
   icon: React.ReactElement;
   title: string;
-  content: string;
-  showCode?: boolean;
+  apiList?: ApiListItem[];
 }
 
-export const CodeCard = ({ tool, icon, title, content, showCode = true }: CodeCardProps) => {
-  const [collapsed, setCollapsed] = useState(false);
-
-  const isError = tool.status === "error";
-  const lineCount = content ? content.split("\n").length : 0;
-  const hasBody = showCode && !!content;
-  const isCollapsed = !showCode || collapsed || isError;
-  const canToggle = showCode && !isError && hasBody;
-
+export const CodeCard = ({ tool, icon, title, apiList = [] }: CodeCardProps) => {
   return (
     <div className={css["code-card"]}>
-      <div
-        className={[css["code-card-header"], canToggle ? css["code-card-header-clickable"] : ""].join(" ")}
-        onClick={() => canToggle && setCollapsed((c) => !c)}
-      >
+      <div className={css["code-card-header"]}>
         <StatusIcon tool={tool} icon={icon} />
         <span className={css["code-card-filename"]}>{title}</span>
-        {!isError && showCode && lineCount > 0 && (
-          <span className={css["code-card-lines"]}>{lineCount} 行</span>
-        )}
         <Duration tool={tool} />
-        {canToggle && (
-          <span className={css["code-card-toggle"]}>{isCollapsed ? "▶" : "▼"}</span>
-        )}
       </div>
-      {hasBody && !isCollapsed && (
-        <pre className={css["code-card-body"]}>
-          <code>{content}</code>
-        </pre>
-      )}
+      <ApiListSection apiList={apiList} />
     </div>
   );
 };
