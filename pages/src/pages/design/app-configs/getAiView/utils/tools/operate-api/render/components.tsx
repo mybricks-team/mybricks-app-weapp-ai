@@ -134,7 +134,7 @@ export const PendingCodeCard = ({ tool, icon, title }: { tool: ToolRecord; icon:
 
 export interface CodeCardProps {
   tool: ToolRecord;
-  icon: React.ReactElement;
+  icon?: React.ReactElement;
   title: string;
   apiList?: ApiListItem[];
 }

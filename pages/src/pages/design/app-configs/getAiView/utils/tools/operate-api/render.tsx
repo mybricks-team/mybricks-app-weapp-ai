@@ -21,7 +21,6 @@ export function renderOperateApiTool(tool: ToolRecord) {
   return (
     <CodeCard
       tool={tool}
-      icon={<FileIcon />}
       title={tool.title || "同步接口"}
       apiList={getApiList(tool)}
     />
