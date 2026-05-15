@@ -78,7 +78,7 @@
     "@mybricks/sdk-for-app": "^1.0.78",
     "@mybricks/tarojs-components": "^0.0.5",
     "@mybricks/tarojs-plugin-framework-react": "^0.0.3",
-    "@mybricks/tarojs-router": "^0.0.2",
+    "@mybricks/tarojs-router": "^0.0.3",
     "@mybricks/tarojs-runtime": "^0.0.2",
     "@mybricks/tarojs-taro-h5": "^0.0.4",
     "@nutui/icons-react-taro": "^3.0.2-cpp.3.beta.9",
