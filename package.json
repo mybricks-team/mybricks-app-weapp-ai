@@ -67,7 +67,7 @@
     "react": {
       "name": "mybricks-app-weapp-ai",
       "description": "AI生成小程序和H5的多端解决方案",
-      "version": "1.1.3",
+      "version": "1.1.4",
       "mybricks": {
         "extName": "weapp-ai",
         "icon": "/mybricks-app-weapp-ai/public/icon.svg",
