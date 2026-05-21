@@ -62,6 +62,14 @@ module.exports = {
       '@tarojs/taro-h5': '@mybricks/tarojs-taro-h5',
       '@tarojs/components$': '@mybricks/tarojs-components/lib/react',
       '@tarojs/components': '@mybricks/tarojs-components',
+
+      // -- taro 本地测试 --
+      // '@tarojs/router': path.resolve(__dirname, './@tarojs/taro-router'),
+      // '@tarojs/taro-h5':  path.resolve(__dirname, './@tarojs/taro-h5'),
+      // '@tarojs/components$':  path.resolve(__dirname, './@tarojs/taro-components/lib/react'),
+      // '@tarojs/components/dist/components$': path.resolve(__dirname, './@tarojs/taro-components/dist/components'),
+      // '@tarojs/components/dist/taro-components/taro-components.css': path.resolve(__dirname, './@tarojs/taro-components/dist/taro-components/taro-components.css'),
+      // '@tarojs/components':  path.resolve(__dirname, './@tarojs/taro-components/dist'),
     },
   },
   externals: [
@@ -85,6 +93,31 @@ module.exports = {
       '@mybricks/sdk-for-ai': 'mybricks_sdk_for_ai',
       '@mybricks/ai-utils': 'mybricks_ai_utils',
       // "@mybricks/plugin-ai": "MyBricksPluginAI",
+      '@babel/standalone': 'Babel',
+      '@babel/parser': {
+        commonjs: '@babel/parser',
+        commonjs2: '@babel/parser',
+        amd: '@babel/parser',
+        root: ['Babel', 'packages', 'parser'],
+      },
+      '@babel/traverse': {
+        commonjs: '@babel/traverse',
+        commonjs2: '@babel/traverse',
+        amd: '@babel/traverse',
+        root: ['Babel', 'packages', 'traverse', 'default'],
+      },
+      '@babel/generator': {
+        commonjs: '@babel/generator',
+        commonjs2: '@babel/generator',
+        amd: '@babel/generator',
+        root: ['Babel', 'packages', 'generator', 'default'],
+      },
+      '@babel/types': {
+        commonjs: '@babel/types',
+        commonjs2: '@babel/types',
+        amd: '@babel/types',
+        root: ['Babel', 'packages', 'types'],
+      },
     },
   ],
   module: {
