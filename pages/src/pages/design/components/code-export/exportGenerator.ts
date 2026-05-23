@@ -29,26 +29,88 @@ export interface ExportOptions {
   onProgress?: (progress: ExportProgress) => void;
 }
 
-export type ExportMode = 'directory' | 'zip';
+type FileSystemExportOptions = ExportOptions & {
+  /** 是否创建导出目录 */
+  isCreateFolder?: boolean;
+}
 
+export interface ExportMdOptions {
+  fileName: string;
+  mimeType: string;
+  folderName?: string;
+}
+
+export type ExportMode = 'fileSystem' | 'download';
+
+/**
+ * 按当前环境导出代码文件。
+ */
 export async function exportCode(
   files: FileItem[],
   options: ExportOptions = {}
 ) {
   const mode = getExportMode();
 
-  if (mode === 'directory') {
-    return exportToDirectory(files, options);
+  if (mode === 'fileSystem') {
+    return exportToFileSystem(files, options);
   }
 
-  return exportToZip(files, options);
+  return exportToDownload(files, options);
 }
 
-async function exportToDirectory(
+/**
+ * 按当前环境导出 Markdown 文件。
+ */
+export async function exportMd(content: string, options: ExportMdOptions) {
+  const mode = getExportMode();
+
+  if (mode === 'fileSystem') {
+    const { fileName, folderName } = options;
+    return exportToFileSystem([
+      {
+        fileName,
+        content,
+      },
+    ], {
+      folderName,
+      isCreateFolder: false,
+    });
+  }
+
+  const { fileName, mimeType } = options
+  triggerDownload(new Blob([content], { type: mimeType }), fileName)
+}
+
+/**
+ * 触发浏览器下载。
+ */
+function triggerDownload(blob: Blob, fileName: string) {
+  const url = URL.createObjectURL(blob)
+  try {
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = fileName
+    anchor.click()
+  } catch (error) {
+    throw new Error(`文件下载失败: ${fileName}`)
+  } finally {
+    URL.revokeObjectURL(url)
+  }
+}
+
+
+/**
+ * 使用浏览器文件系统 API 导出文件。
+ */
+async function exportToFileSystem(
   files: FileItem[],
-  options: ExportOptions = {}
+  options: FileSystemExportOptions = {}
 ) {
-  const { folderName = 'App', onProgress } = options;
+  const {
+    folderName = 'App',
+    onProgress,
+    isCreateFolder = true,
+  } = options;
 
   // 使用浏览器文件系统 API 导出
   console.log('[代码导出] 使用浏览器文件系统 API');
@@ -60,17 +122,18 @@ async function exportToDirectory(
       startIn: 'downloads',
     });
 
-    // 2. 创建组件文件夹
-    const componentDirHandle = await directoryHandle.getDirectoryHandle(folderName, {
-      create: true,
-    });
+    const targetDirHandle = isCreateFolder
+      ? await directoryHandle.getDirectoryHandle(folderName, {
+        create: true,
+      })
+      : directoryHandle
 
     // 3. 写入文件
     const totalFiles = files.length;
     let completedFiles = 0;
 
     for (const file of files) {
-      await writeFile(componentDirHandle, file);
+      await writeFile(targetDirHandle, file);
       completedFiles++;
 
       onProgress?.({
@@ -81,7 +144,11 @@ async function exportToDirectory(
       });
     }
 
-    console.log(`[浏览器导出] 成功导出 ${totalFiles} 个文件到: ${folderName}`);
+    console.log(
+      isCreateFolder
+        ? `[浏览器导出] 成功导出 ${totalFiles} 个文件到: ${folderName}`
+        : `[浏览器导出] 成功导出 ${totalFiles} 个文件到所选目录`,
+    );
   } catch (error) {
     if ((error as any).name === 'AbortError') {
       console.log('[浏览器导出] 用户取消导出');
@@ -91,7 +158,10 @@ async function exportToDirectory(
   }
 }
 
-async function exportToZip(
+/**
+ * 将文件列表打包为 zip 并下载。
+ */
+async function exportToDownload(
   files: FileItem[],
   options: ExportOptions = {}
 ) {
@@ -113,19 +183,9 @@ async function exportToZip(
   }
 
   const blob = await zip.generateAsync({ type: 'blob' });
-  const url = URL.createObjectURL(blob);
 
-  try {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${folderName}.zip`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    console.log(`[浏览器导出] 已下载 zip 包: ${folderName}.zip`);
-  } finally {
-    URL.revokeObjectURL(url);
-  }
+  triggerDownload(blob, `${folderName}.zip`)
+  console.log(`[浏览器导出] 已下载 zip 包: ${folderName}.zip`);
 }
 
 /**
@@ -161,10 +221,13 @@ async function writeFile(
   await writable.close();
 }
 
+/**
+ * 判断当前导出通道。
+ */
 function getExportMode(): ExportMode {
   if (window.isSecureContext && typeof window.showDirectoryPicker === 'function') {
-    return 'directory';
+    return 'fileSystem';
   }
 
-  return 'zip';
+  return 'download';
 }

@@ -32,14 +32,19 @@ export class CodeTransformer {
     try {
       const ast = this.parseCode(file.content);
 
+      this.removePopupVisibleDecorators(ast);
+      this.replaceLessImports(ast);
       this.replaceMybricksLogger(ast);
       this.removeMybricksRefWrappers(ast);
       this.replaceEnvVars(ast);
       if (file.path.endsWith('dataSource.ts')) {
-        this.removeMybricksDataSource(ast);
+        this.replaceMybricksDataSourceImport(ast);
       }
       if (file.path.endsWith('.tsx')) {
         this.ensureReactImport(ast);
+      }
+      if (file.path.endsWith('app.tsx')) {
+        this.ensureAppResetStyleImport(ast);
       }
 
       const output = generate(
@@ -97,6 +102,9 @@ export class CodeTransformer {
     });
   }
 
+  /**
+   * 移除 mybricks 的 ref 包装调用与对应导入。
+   */
   private removeMybricksRefWrappers(ast: t.File) {
     const REF_NAMES = new Set(['appRef', 'comRef', 'popupRef']);
 
@@ -127,39 +135,99 @@ export class CodeTransformer {
     });
   }
 
-  private removeMybricksDataSource(ast: t.File) {
-    const dataSourceClasses = new Set<string>();
+  /**
+   * 将 mybricks 的 DataSource 导入改成导出工程内的本地实现。
+   */
+  private replaceMybricksDataSourceImport(ast: t.File) {
+    const localDataSourcePath = './utils/DataSource';
 
     traverse(ast, {
       ImportDeclaration(path) {
         if (path.node.source.value !== 'mybricks') return;
 
-        const dataSourceSpecifierIndex = path.node.specifiers.findIndex(
-          (s) => t.isImportSpecifier(s) && t.isIdentifier(s.local, { name: 'DataSource' }),
+        const otherSpecifiers = path.node.specifiers.filter(
+          (specifier: t.ImportDeclaration['specifiers'][number]) =>
+            !(
+              t.isImportSpecifier(specifier) &&
+              t.isIdentifier(specifier.local, { name: 'DataSource' })
+            ),
         );
-        if (dataSourceSpecifierIndex === -1) return;
 
-        if (path.node.specifiers.length === 1) {
-          path.remove();
-        } else {
-          path.node.specifiers.splice(dataSourceSpecifierIndex, 1);
+        if (otherSpecifiers.length === path.node.specifiers.length) {
+          return;
         }
+
+        const localDataSourceImport = t.importDeclaration(
+          [t.importDefaultSpecifier(t.identifier('DataSource'))],
+          t.stringLiteral(localDataSourcePath),
+        );
+
+        if (otherSpecifiers.length === 0) {
+          path.replaceWith(localDataSourceImport);
+          return;
+        }
+
+        path.replaceWithMultiple([
+          t.importDeclaration(otherSpecifiers, t.stringLiteral('mybricks')),
+          localDataSourceImport,
+        ]);
       },
     });
+  }
 
+  /**
+   * 移除导出代码里的 PopupVisible 装饰器。
+   */
+  private removePopupVisibleDecorators(ast: t.File) {
     traverse(ast, {
-      ClassDeclaration(path) {
-        const superClass = path.node.superClass;
-        if (t.isIdentifier(superClass, { name: 'DataSource' })) {
-          if (path.node.id) {
-            dataSourceClasses.add(path.node.id.name);
-          }
-          path.node.superClass = null;
+      Decorator(path) {
+        const expression = path.node.expression;
+        const isPopupVisibleDecorator =
+          t.isIdentifier(expression, { name: 'PopupVisible' }) ||
+          (t.isCallExpression(expression) && t.isIdentifier(expression.callee, { name: 'PopupVisible' }));
+
+        if (isPopupVisibleDecorator) {
+          path.remove();
         }
       },
     });
   }
 
+  /**
+   * 将带绑定的 less 导入改成 module less，保留副作用样式导入。
+   */
+  private replaceLessImports(ast: t.File) {
+    traverse(ast, {
+      ImportDeclaration(importPath: { node: t.ImportDeclaration }) {
+        const sourceValue = importPath.node.source.value;
+        if (!sourceValue.endsWith('.less')) return;
+        if (sourceValue.endsWith('.module.less')) return;
+        if (importPath.node.specifiers.length === 0) return;
+
+        importPath.node.source = t.stringLiteral(sourceValue.replace(/\.less$/, '.module.less'));
+      },
+    });
+  }
+
+  /**
+   * 为 app 入口补 reset 样式导入。
+   */
+  private ensureAppResetStyleImport(ast: t.File) {
+    const hasResetStyleImport = ast.program.body.some(
+      (node) => t.isImportDeclaration(node) && node.source.value === './reset.less',
+    );
+    if (hasResetStyleImport) {
+      return;
+    }
+
+    ast.program.body.push(
+      t.importDeclaration([], t.stringLiteral('./reset.less')),
+    );
+  }
+
+  /**
+   * 为 tsx 文件补默认 React 导入。
+   */
   private ensureReactImport(ast: t.File) {
     let hasReactDefaultImport = false;
 
@@ -180,6 +248,9 @@ export class CodeTransformer {
     ast.program.body.unshift(reactImport);
   }
 
+  /**
+   * 替换约定的环境变量并尽量折叠静态分支。
+   */
   private replaceEnvVars(ast: t.File) {
     type RawExpr = { __rawExpr: true; expr: string };
 
@@ -253,13 +324,19 @@ export class CodeTransformer {
     });
   }
 
+  /**
+   * 解析源码为 Babel AST。
+   */
   private parseCode(code: string): t.File {
     return parser.parse(code, {
       sourceType: 'module',
-      plugins: ['typescript', 'jsx'],
+      plugins: ['typescript', 'jsx', 'decorators-legacy'],
     });
   }
 
+  /**
+   * 判断当前文件是否需要参与转换。
+   */
   private isSupportedFile(filePath: string): boolean {
     return /\.(tsx|jsx|ts|js)$/.test(filePath);
   }

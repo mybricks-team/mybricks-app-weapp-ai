@@ -1,4 +1,4 @@
-import type { FileItem } from './structure-generator'
+import type { FileItem } from './structureGenerator'
 
 const TABBAR_ASSET_DIR = 'src/assets/tabbar'
 const TABBAR_ICON_PATTERN = /(\b(?:iconPath|selectedIconPath)\s*:\s*)(['"])(https?:\/\/[^'"]*)\2/g
@@ -40,6 +40,9 @@ const getMimeTypeByExtension = (extension: string) => {
   return 'image/png'
 }
 
+/**
+ * 下载远程 tabBar 图标资源。
+ */
 const downloadRemoteImage = async (url: string) => {
   const response = await fetch(url)
 
@@ -59,6 +62,9 @@ const downloadRemoteImage = async (url: string) => {
   }
 }
 
+/**
+ * 规范化 tabBar 图标格式与后缀。
+ */
 const normalizeTabBarImage = async (
   blob: Blob,
   url: string,
@@ -73,6 +79,9 @@ const normalizeTabBarImage = async (
   }
 }
 
+/**
+ * 将图片 Blob 转换成导出所需格式。
+ */
 const convertBlobToImage = async (blob: Blob, mimeType: string) => {
   const objectUrl = URL.createObjectURL(blob)
 
@@ -110,6 +119,9 @@ const convertBlobToImage = async (blob: Blob, mimeType: string) => {
   }
 }
 
+/**
+ * 加载图片资源供 canvas 转换使用。
+ */
 const loadImage = (src: string) => {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image()
@@ -120,11 +132,17 @@ const loadImage = (src: string) => {
   })
 }
 
+/**
+ * 生成 tabBar 本地图标文件名。
+ */
 const buildTabbarAssetFileName = (index: number, fieldName: 'iconPath' | 'selectedIconPath', extension: string) => {
   const suffix = fieldName === 'iconPath' ? 'icon' : 'selected'
   return `tabbar-${index}-${suffix}.${extension}`
 }
 
+/**
+ * 将 app.config.ts 中的远程 tabBar 图标落成本地资源。
+ */
 export async function localizeRemoteTabBarIcons(files: FileItem[]): Promise<FileItem[]> {
   const appConfigIndex = files.findIndex((file) => file.fileName === 'src/app.config.ts')
   if (appConfigIndex < 0) {
@@ -196,6 +214,9 @@ export async function localizeRemoteTabBarIcons(files: FileItem[]): Promise<File
   return [...nextFiles, ...assetFiles]
 }
 
+/**
+ * 异步替换字符串中的所有正则匹配项。
+ */
 async function replaceAsync(
   input: string,
   pattern: RegExp,

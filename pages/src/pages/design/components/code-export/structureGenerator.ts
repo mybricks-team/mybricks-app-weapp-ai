@@ -1,6 +1,5 @@
-import { tramsformJs, tramsformAppJs } from "./codeTransform";
 import taroTemplateJson from './taro-template.json'
-import { localizeRemoteTabBarIcons } from './tabbar-assets'
+import { localizeRemoteTabBarIcons } from './tabbarGenerator'
 
 /**
  * 代码结构生成器
@@ -34,6 +33,20 @@ export interface ComponentData {
   }
 }
 
+/**
+ * 安全解码 AI 产出的源码内容。
+ */
+function safeDecode(value = '') {
+  try {
+    return decodeURIComponent(value)
+  } catch {
+    return value
+  }
+}
+
+/**
+ * 按 taro 模板结构组装导出文件。
+ */
 export function generateCodeStructure(data: ComponentData): FileItem[] {
   const files: Map<string, FileItem> = new Map();
   taroTemplateJson.forEach((file) => {
@@ -42,28 +55,22 @@ export function generateCodeStructure(data: ComponentData): FileItem[] {
 
   data.files.forEach((file) => {
     const { fileName, source } = file;
-    const filterFiles = ['setup.ts', 'scheme.ts']
+    const filterFiles = ['setup.ts', 'scheme.ts', 'requirement.md']
     if (filterFiles.includes(fileName)) {
       return
     }
 
-    let code = decodeURIComponent(source);
-    let name = fileName;
-
+    const code = safeDecode(source);
     const suffix = fileName.split('.').pop()
-    const jsFiles = ['js', 'jsx', 'ts', 'tsx']
-    if (jsFiles.includes(suffix)) {
-      code = tramsformJs(code)
-    } else if (suffix === 'less') {
-      name = name.replace('.less', '.module.less')
-    }
+    const outputFileName = suffix === 'less' &&
+      fileName !== 'app.less' &&
+      !fileName.endsWith('.module.less')
+      ? fileName.replace('.less', '.module.less')
+      : fileName
+    const outputPath = `src/${outputFileName}`
 
-    if (name.endsWith('app.tsx')) {
-      code = tramsformAppJs(code)
-    } 
-
-    files.set(`src/${name}`, {
-      fileName: `src/${name}`,
+    files.set(outputPath, {
+      fileName: outputPath,
       content: code
     })
   })
@@ -74,11 +81,9 @@ export function generateCodeStructure(data: ComponentData): FileItem[] {
   return Array.from(files.values());
 }
 
-export async function generateExportFiles(data: ComponentData): Promise<FileItem[]> {
-  const files = generateCodeStructure(data)
-  return localizeRemoteTabBarIcons(files)
-}
-
+/**
+ * 生成主题变量文件。
+ */
 const themesFile = (data: ComponentData) => {
   const themes = data.themes.themes.reduce((pre, theme) => {
     pre[theme.id] = theme.vars.reduce((pre, cssVar) => {
@@ -94,6 +99,9 @@ const themesFile = (data: ComponentData) => {
   }
 }
 
+/**
+ * 生成导出入口文件。
+ */
 const entryFile = () => {
   return {
     fileName: 'index.jsx',

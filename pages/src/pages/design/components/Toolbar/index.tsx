@@ -11,9 +11,7 @@ import {
 } from 'antd'
 import { Locker, GlobalContext } from '@mybricks/sdk-for-app/ui'
 import SaveTimeDisplay from './SaveTimeDisplay'
-import { code } from './icon'
 import styles from './index.less'
-import CodeExportButton from '../code-export'
 
 interface ToolbarProps {
   appData: {
@@ -28,7 +26,6 @@ interface ToolbarProps {
   onOperableChange: (operable: boolean) => void
   beforeToggleUnLock: () => Promise<boolean>
   onSave: () => Promise<void>
-  getExportToJSON: () => any
 }
 
 export interface TitlebarRef {
@@ -44,7 +41,6 @@ const ToolBar = forwardRef<TitlebarRef, ToolbarProps>((props, ref) =>{
     downloadVibeUI,
     onOperableChange,
     beforeToggleUnLock,
-    getExportToJSON
   } = props
 
   const [savedTime, setSavedTime] = useState(appData.fileContent._updateTime)
@@ -70,7 +66,7 @@ const ToolBar = forwardRef<TitlebarRef, ToolbarProps>((props, ref) =>{
     <div className={styles['toolbar']}>
       <div className={styles['toolbar-right']}>
         <div className={styles['toolbar-main']}>
-          <GlobalContext.Provider value={{ fileContent: appDataRef.current.fileContent, user: appDataRef.current.user, fileId: appDataRef.current.fileId }}>
+          <GlobalContext.Provider value={{ fileContent: appDataRef.current.fileContent, user: appDataRef.current.user, fileId: appDataRef.current.fileId } as any}>
             <Locker
               statusChange={(props) => {
                 if (typeof props === 'number') {

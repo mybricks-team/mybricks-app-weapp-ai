@@ -55,12 +55,17 @@ import classNames from 'classnames'
 import { sendPageDeps } from './utils/sendPageDeps'
 import { BranchMergeModal } from './components/branch-merge-modal'
 import { useBranch } from './hooks/useBranch'
-import Titlebar, { type TitlebarRef as LocalTitlebarRef } from './components/Titlebar'
-import Toolbar2, { type TitlebarRef as LocalToolbarRef } from './components/Toolbar'
-import { getAiComParams, exportCode, generateExportFiles } from './components/code-export'
+import type { TitlebarRef as DesignerTitlebarRef } from '../../../../../sdk-for-app/src/ui/components/Titlebar'
+import { DesignerTitleBar } from '../../../../../sdk-for-app/src/ui/components/Titlebar'
+import type { TitlebarRef as DesignerToolbarRef } from '../../../../../sdk-for-app/src/ui/components/Toolbar'
+import { DesignerToolBar } from '../../../../../sdk-for-app/src/ui/components/Toolbar'
+import {
+  useAiPrdExport,
+  useAiSourceCodeExport,
+} from './components/code-export/useExport'
+
 
 const msgSaveKey = 'save'
-const msgExportKey = 'export'
 
 /**
  * @description 获取当前应用setting
@@ -73,10 +78,10 @@ const getAppSetting = async () => {
 }
 
 export default function MyDesigner({ appData: originAppData }) {
-  const toolbarRef = useRef<LocalToolbarRef | null>(null)
-  const titleRef = useRef<LocalTitlebarRef | null>(null)
+  const toolbarRef = useRef<DesignerToolbarRef | null>(null)
+  const titleRef = useRef<DesignerTitlebarRef | null>(null)
   window.fileId = originAppData.fileId
-  window._disableSmartLayout = originAppData?.config?.['mybricks-app-pcspa']?.config?.feature?.disableSmartLayout; // 是否禁用智能布局
+  ;(window as any)._disableSmartLayout = originAppData?.config?.['mybricks-app-pcspa']?.config?.feature?.disableSmartLayout; // 是否禁用智能布局
 
   const { branchInfo, branchName, mainFileId, getBranchInfoByMainFileId, getMainFileId } = useBranch()
 
@@ -236,7 +241,7 @@ export default function MyDesigner({ appData: originAppData }) {
 
           if (content) {
             setSaveTip(`改动已保存-${moment(new Date()).format('HH:mm')}`)
-            toolbarRef.current.setSavedTime(Date.now())
+            toolbarRef.current?.setSavedTime(Date.now())
           }
 
           // if (!options?.skipMessage) {
@@ -310,6 +315,7 @@ export default function MyDesigner({ appData: originAppData }) {
     if (ctx.debug && localStorage.getItem('__DEBUG_DESIGNER__')) {
       return localStorage.getItem('__DEBUG_DESIGNER__')
     }
+    // return 'https://f2.eckwai.com/kos/nlav12333/mybricks/designer-spa/3.9.916.t1/index.min.js'
     return appConfig.designer?.url || DESIGNER_STATIC_PATH
   }, [appConfig])
 
@@ -563,41 +569,6 @@ export default function MyDesigner({ appData: originAppData }) {
     },
     [isPreview, ctx]
   )
-
-  const handleExport = useCallback(async () => {
-    const exportJSON = designerRef.current.toJSON()
-    const aiComParams = getAiComParams(exportJSON);
-    if (!aiComParams?.data) {
-      console.error('[导出为代码] 组件数据不存在');
-      return;
-    }
-
-    message.loading({
-      content: '导出中...',
-      duration: 0,
-      key: msgExportKey,
-    })
-    const files = await generateExportFiles(aiComParams.data);
-    try {
-      await exportCode(files, {
-        folderName: 'App',
-        onProgress: (progress) => {
-          message.loading({
-            content: `导出中${progress.progress}%`,
-            duration: 0,
-            key: msgExportKey,
-          })
-          console.log(`[导出进度] ${progress.progress}% - ${progress.currentFile}`);
-        },
-      });
-      message.success('导出代码成功！')
-    } catch (error) {
-      console.error('[导出为代码] 导出失败', error);
-      const errMsg = error?.toString() || '导出代码失败'
-      message.error(errMsg);
-    }
-    message.destroy(msgExportKey)
-  }, [])
 
   const preview = useCallback(() => {
     const json = getToJSON()
@@ -1014,7 +985,7 @@ export default function MyDesigner({ appData: originAppData }) {
             }
 
             if (newName) {
-              titleRef.current.setTitle(newName)
+              titleRef.current?.setTitle(newName)
               await ctx.save({ name: newName })
             }
           } catch (e) {
@@ -1073,6 +1044,16 @@ export default function MyDesigner({ appData: originAppData }) {
   // 上报页面的开发数据
   usePageStayTime({ operable, appData: ctx, currentRef: designerRef })
 
+  const { handleExport } = useAiSourceCodeExport({
+    getExportToJSON: () => designerRef.current?.toJSON?.(),
+    folderName: 'App',
+  })
+  const { handleExportPrd } = useAiPrdExport({
+    getExportToJSON: () => designerRef.current?.toJSON?.(),
+    getPrdTitle: () => ctx.fileName?.replace(/\.[^.]+$/, ''),
+    getRuntimeFiles: (comId) => (window as any)._forApp_[comId].getFiles(),
+  })
+
   const TrueDesigner = useMemo(() => {
     return (
       SPADesigner &&
@@ -1084,15 +1065,15 @@ export default function MyDesigner({ appData: originAppData }) {
             ref={designerRef}
             titlebar={() => {
               return (
-                <Titlebar
+                <DesignerTitleBar
                   ref={titleRef}
-                  title={appData?.fileContent?.name}
+                  appData={appData}
                 />
               )
             }}
             toolbar={() => {
               return (
-                <Toolbar2
+                <DesignerToolBar
                   ref={toolbarRef}
                   appData={appData}
                   beforeToggleUnLock={beforeToggleUnLock}
@@ -1101,10 +1082,16 @@ export default function MyDesigner({ appData: originAppData }) {
                     ctx.operable = operable
                   }}
                   onSave={save}
-                  downloadVibeUI={handleExport}
-                  getExportToJSON={() => {
-                    return designerRef.current.toJSON()
-                  }}
+                  exportActions={[
+                    {
+                      title: '源代码',
+                      onClick: handleExport,
+                    },
+                    {
+                      title: 'PRD',
+                      onClick: handleExportPrd,
+                    },
+                  ]}
                 />
               )
             }}
@@ -1129,7 +1116,7 @@ export default function MyDesigner({ appData: originAppData }) {
         </>
       )
     )
-  }, [SPADesigner, remotePlugins, builtPlugins, window?.mybricks?.createObservable])
+  }, [SPADesigner, remotePlugins, builtPlugins, handleExport, handleExportPrd, window?.mybricks?.createObservable])
 
 
   useEffect(() => {

@@ -1,61 +1,22 @@
-import React, { useState } from "react";
-import { message, Button } from 'antd'
-import { exportCode } from './export'
-import { generateExportFiles } from './structure-generator';
-
-export type ExportJSON = any
-export { exportCode, generateExportFiles }
+import React from 'react'
+import { Button } from 'antd'
+import type { ExportJSON } from './exportHelper'
+import { useAiSourceCodeExport } from './useExport'
 
 interface CodeExportButtonProps {
   disabled?: boolean
   getExportToJSON: () => ExportJSON
 }
 
-/**
- * 获取AI组件数据
- */
-export function getAiComParams(exportJSON: ExportJSON) {
-  const coms = exportJSON?.scenes?.[0]?.coms || {}
-  const comId = Object.keys(coms)[0]
-  return coms[comId]?.model
-}
+export default function CodeExportButton({ disabled = false, getExportToJSON }: CodeExportButtonProps) {
+  const { loading, handleExport } = useAiSourceCodeExport({
+    getExportToJSON,
+    folderName: 'App',
+  })
 
-export default function CodeExportButton({ disabled = false, getExportToJSON, }: CodeExportButtonProps) {
-  const [loading, setLoading] = useState(false)
-  const [progress, setProgress] = useState(0)
-
-  const handleClick = async () => {
-    if (loading) return
-    const exportJSON = getExportToJSON()
-
-    const aiComParams = getAiComParams(exportJSON);
-    if (!aiComParams?.data) {
-      console.error('[导出为代码] 组件数据不存在');
-      return;
-    }
-
-    setLoading(true)
-    const files = await generateExportFiles(aiComParams.data);
-    try {
-      await exportCode(files, {
-        folderName: 'App',
-        onProgress: (progress) => {
-          setProgress(progress.progress)
-          console.log(`[导出进度] ${progress.progress}% - ${progress.currentFile}`);
-        },
-      });
-      setProgress(0)
-      message.success('导出代码成功！')
-    } catch (error) {
-      console.error('[导出为代码] 导出失败', error);
-      const errMsg = error?.toString() || '导出代码失败'
-      message.error(errMsg);
-    }
-    setLoading(false)
-  }
   return (
-    <Button onClick={handleClick} loading={loading} disabled={disabled}>
-      {progress > 0 ? `${progress}%` : '导出'}
+    <Button onClick={handleExport} loading={loading} disabled={disabled}>
+      导出
     </Button>
   )
 }
