@@ -188,103 +188,103 @@ export default function appConfig(
     },
     desnMode: 'vibeCoding',
     plugins: [
-      ...connetorPlugins,
-      notePlugin.default({
-        user: ctx.user,
-        onUpload: async (file: File) => {
-          return new Promise(async (resolve, reject) => {
-            const { manateeUserInfo, fileId } = ctx;
-            let uploadService = ctx.uploadService;
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("folderPath", `/files/${fileId}`);
+      // ...connetorPlugins,
+      // notePlugin.default({
+      //   user: ctx.user,
+      //   onUpload: async (file: File) => {
+      //     return new Promise(async (resolve, reject) => {
+      //       const { manateeUserInfo, fileId } = ctx;
+      //       let uploadService = ctx.uploadService;
+      //       const formData = new FormData();
+      //       formData.append("file", file);
+      //       formData.append("folderPath", `/files/${fileId}`);
 
-            const useConfigService = !!uploadService;
+      //       const useConfigService = !!uploadService;
 
-            if (!useConfigService) {
-              uploadService = "/paas/api/flow/saveFile";
-            }
+      //       if (!useConfigService) {
+      //         uploadService = "/paas/api/flow/saveFile";
+      //       }
 
-            try {
-              const res = await axios<any, any>({
-                url: uploadService,
-                method: "post",
-                data: formData,
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                  ...manateeUserInfo,
-                },
-              });
-              const { data = {} } = res.data;
-              const { url } = data;
-              if (!url) {
-                reject(`没有返回图片地址`);
-              }
-              const staticUrl = /^http/.test(url)
-                ? url
-                : `${getDomainFromPath(uploadService)}${url}`;
-              resolve({ url: staticUrl });
-              reject(`【图片上传出错】: ${message}`);
-            } catch (error) {
-              message.error(error.message);
-              reject(error);
-            }
-          });
-        },
-        onAtsEmail: ({ subject, to, body, extra, from }) => {
-          let data = { fileId: ctx.fileId, subject, to, body, extra, from };
-          const config = appData.config[APP_NAME]?.config;
-          const serviceApi = config?.emailApiConfig?.sendAtsEmailApi || "";
-          if (serviceApi) {
-            axios({
-              method: "POST",
-              url: serviceApi,
-              withCredentials: false,
-              data,
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }).catch((err) => {
-              console.log("err", err);
-            });
-          }
-        },
-        onSearchUser: (keyword: string) => {
-          return new Promise(async (resolve, reject) => {
-            try {
-              const res = await searchUser(`api/pcpage/searchUser`, {
-                keyword,
-              });
-              // @ts-ignore
-              const formatRes = (res || []).map((item) => {
-                const { email, id, name, avatar } = item;
-                return {
-                  name: name ? `${name}(${email})` : email,
-                  id,
-                  username: email,
-                  orgDisplayName: "",
-                  thumbnailAvatarUrl: avatar,
-                };
-              });
-              resolve(formatRes);
-            } catch (e) {
-              message.error("搜索用户失败!");
-              reject("搜索用户失败!");
-            }
-          });
-        },
-      }),
-      localePlugin({
-        defaultPackLink:
-          ctx?.appConfig?.localeConfig?.defaultI18nLink ||
-          "/mybricks-app-pcspa/public/i18n-example.json",
-        onPackLoad: ({ i18nLangContent }) => {
-          ctx.i18nLangContent = i18nLangContent;
-        },
-        onUsedIdChanged: ({ ids }) => {
-          ctx.i18nUsedIdList = ids;
-        },
-      }),
+      //       try {
+      //         const res = await axios<any, any>({
+      //           url: uploadService,
+      //           method: "post",
+      //           data: formData,
+      //           headers: {
+      //             "Content-Type": "multipart/form-data",
+      //             ...manateeUserInfo,
+      //           },
+      //         });
+      //         const { data = {} } = res.data;
+      //         const { url } = data;
+      //         if (!url) {
+      //           reject(`没有返回图片地址`);
+      //         }
+      //         const staticUrl = /^http/.test(url)
+      //           ? url
+      //           : `${getDomainFromPath(uploadService)}${url}`;
+      //         resolve({ url: staticUrl });
+      //         reject(`【图片上传出错】: ${message}`);
+      //       } catch (error) {
+      //         message.error(error.message);
+      //         reject(error);
+      //       }
+      //     });
+      //   },
+      //   onAtsEmail: ({ subject, to, body, extra, from }) => {
+      //     let data = { fileId: ctx.fileId, subject, to, body, extra, from };
+      //     const config = appData.config[APP_NAME]?.config;
+      //     const serviceApi = config?.emailApiConfig?.sendAtsEmailApi || "";
+      //     if (serviceApi) {
+      //       axios({
+      //         method: "POST",
+      //         url: serviceApi,
+      //         withCredentials: false,
+      //         data,
+      //         headers: {
+      //           "Content-Type": "application/json",
+      //         },
+      //       }).catch((err) => {
+      //         console.log("err", err);
+      //       });
+      //     }
+      //   },
+      //   onSearchUser: (keyword: string) => {
+      //     return new Promise(async (resolve, reject) => {
+      //       try {
+      //         const res = await searchUser(`api/pcpage/searchUser`, {
+      //           keyword,
+      //         });
+      //         // @ts-ignore
+      //         const formatRes = (res || []).map((item) => {
+      //           const { email, id, name, avatar } = item;
+      //           return {
+      //             name: name ? `${name}(${email})` : email,
+      //             id,
+      //             username: email,
+      //             orgDisplayName: "",
+      //             thumbnailAvatarUrl: avatar,
+      //           };
+      //         });
+      //         resolve(formatRes);
+      //       } catch (e) {
+      //         message.error("搜索用户失败!");
+      //         reject("搜索用户失败!");
+      //       }
+      //     });
+      //   },
+      // }),
+      // localePlugin({
+      //   defaultPackLink:
+      //     ctx?.appConfig?.localeConfig?.defaultI18nLink ||
+      //     "/mybricks-app-pcspa/public/i18n-example.json",
+      //   onPackLoad: ({ i18nLangContent }) => {
+      //     ctx.i18nLangContent = i18nLangContent;
+      //   },
+      //   onUsedIdChanged: ({ ids }) => {
+      //     ctx.i18nUsedIdList = ids;
+      //   },
+      // }),
       AIPlugin({
         user: {
           name: appData.user.name || appData.user.email || "user",
@@ -299,84 +299,84 @@ export default function appConfig(
           enabledActionTags: ctx?.appConfig?.ai?.enabledActionTags
         }
       }),
-      ...remotePlugins,
-      themePlugin.use({ sdk: appData }),
-      ...(ctx.isPreview
-        ? []
-        : [
-            versionPlugin({
-              user: ctx.user,
-              file: appData.fileContent || {},
-              disabled: ctx.disabled,
-              needSavePreview: true,
-              needPublishRevert: true,
-              envMap,
-              onInit: (versionApi) => {
-                ctx.versionApi = versionApi;
-              },
-              onRevert: async (params: {
-                pubAssetFilePath: string;
-                nowVersion: string;
-                fileId: number;
-                type: string;
-              }) => {
-                const { fileId, nowVersion, pubAssetFilePath, type } = params;
-                try {
-                  const finish = message.loading("正在回滚...", 0);
-                  const res: { code: number; message: string } =
-                    await fAxios.post("/api/pcpage/rollback", {
-                      filePath: pubAssetFilePath,
-                      nowVersion,
-                      type,
-                      fileId,
-                    });
-                  finish();
+      // ...remotePlugins,
+      // themePlugin.use({ sdk: appData }),
+      // ...(ctx.isPreview
+      //   ? []
+      //   : [
+      //       versionPlugin({
+      //         user: ctx.user,
+      //         file: appData.fileContent || {},
+      //         disabled: ctx.disabled,
+      //         needSavePreview: true,
+      //         needPublishRevert: true,
+      //         envMap,
+      //         onInit: (versionApi) => {
+      //           ctx.versionApi = versionApi;
+      //         },
+      //         onRevert: async (params: {
+      //           pubAssetFilePath: string;
+      //           nowVersion: string;
+      //           fileId: number;
+      //           type: string;
+      //         }) => {
+      //           const { fileId, nowVersion, pubAssetFilePath, type } = params;
+      //           try {
+      //             const finish = message.loading("正在回滚...", 0);
+      //             const res: { code: number; message: string } =
+      //               await fAxios.post("/api/pcpage/rollback", {
+      //                 filePath: pubAssetFilePath,
+      //                 nowVersion,
+      //                 type,
+      //                 fileId,
+      //               });
+      //             finish();
 
-                  if (res.code === 1) {
-                    message.success(res.message);
-                  } else {
-                    message.error("回滚失败！");
-                  }
-                } catch (e) {
-                  message.error("回滚失败！");
-                }
-              },
-              modalActiveExtends: [
-                {
-                  type: "publish",
-                  title: (
-                    <Tooltip
-                      color="white"
-                      title={
-                        <a
-                          target="_blank"
-                          href="https://docs.mybricks.world/docs/publish-integration/kjkj/"
-                        >
-                          使用说明
-                        </a>
-                      }
-                    >
-                      下载
-                    </Tooltip>
-                  ),
-                  onClick({ fileId, type: envType, version }) {
-                    const loadend = message.loading(
-                      `版本 ${version} 下载中...`,
-                      0
-                    );
-                    download(
-                      `api/pcpage/download-product/${fileId}/${envType}/${version}`
-                    ).finally(() => {
-                      loadend();
-                    });
-                  },
-                },
-              ],
-            }),
-          ]),
-      pluginToCode({
-        type: "spa",
-      }),
+      //             if (res.code === 1) {
+      //               message.success(res.message);
+      //             } else {
+      //               message.error("回滚失败！");
+      //             }
+      //           } catch (e) {
+      //             message.error("回滚失败！");
+      //           }
+      //         },
+      //         modalActiveExtends: [
+      //           {
+      //             type: "publish",
+      //             title: (
+      //               <Tooltip
+      //                 color="white"
+      //                 title={
+      //                   <a
+      //                     target="_blank"
+      //                     href="https://docs.mybricks.world/docs/publish-integration/kjkj/"
+      //                   >
+      //                     使用说明
+      //                   </a>
+      //                 }
+      //               >
+      //                 下载
+      //               </Tooltip>
+      //             ),
+      //             onClick({ fileId, type: envType, version }) {
+      //               const loadend = message.loading(
+      //                 `版本 ${version} 下载中...`,
+      //                 0
+      //               );
+      //               download(
+      //                 `api/pcpage/download-product/${fileId}/${envType}/${version}`
+      //               ).finally(() => {
+      //                 loadend();
+      //               });
+      //             },
+      //           },
+      //         ],
+      //       }),
+      //     ]),
+      // pluginToCode({
+      //   type: "spa",
+      // }),
     ],
     comLibLoader() {
       return ['https://p4-ec.ecukwai.com/kos/nlav11092/vibe-coding/comlib/2.0.53/edit.593a5a20259f05e7.js']
