@@ -12,7 +12,7 @@ const firstOfAll = `- 开发宪章
   - 响应式：保证合理统一的间距，以及支持宽度变化自适应的代码；
   - 画布宽度：414px；
 - 拆分逻辑
-  - 精准识别到底是页面还是弹窗，对其进行拆分，如果是页面，需要在\`app.config.ts\`中的pages进行配置，如果是tab页，需要同时在\`app.config.ts\`中的pages以及tabBar.list进行配置， 如果是弹窗，需要使用popupRef，一个弹窗一个popupRef；
+  - 精准识别到底是页面还是弹窗，对其进行拆分，如果是页面，需要在\`app.config.ts\`中的pages进行配置，如果是tab页，需要同时在\`app.config.ts\`中的pages以及tabBar.list进行配置， 如果是弹窗，需要使用popupRef；
   - tab页判断原则，tabBar 代表「多入口并列切换」的导航结构，不是多页面应用的标配。判断标准：
     - 需要 tabBar：需求中明确出现多个平级主功能模块可以来回切换（如首页/我的），页面关系是「并列」而非「跳转」；
     - 不需要 tabBar：登录、注册、详情、功能流程等场景，即使包含多个页面，页面间是跳转关系，不是并列切换；
@@ -39,11 +39,9 @@ const assetsUsageSection = `- 对于图标：为了保证视觉的统一与专�
 const architectureSection = `\`\`\`
 ├─ app.config.ts          # 应用入口，app配置，有且仅有一个，必须写在根路径，文件名必须为app.config.ts
 ├─ app.tsx                # 应用渲染入口，有且仅有一个，必须写在根路径，文件名必须为app.tsx
-├─ app.less               # 全局样式（可选）
-├─ store.ts               # 全局 store（可选）
-├─ scheme.ts              # 接口 scheme （项目唯一文件且必须，而且在dataSource.ts和 setup.ts之前写入）
-├─ dataSource.ts          # 真实接口（项目唯一文件且必须）
-├─ setup.ts               # mock接口（项目唯一文件且必须）
+├─ app.less               # 全局样式（项目唯一文件且必须）
+├─ dataSource.ts          # 项目唯一文件，必须
+├─ setup.ts               # 项目唯一文件，必须
 ├─ requirement.md         # 需求文档（又名prd、PRD，在最后写入）
 ├─ hooks                  # 可选，可复用的全局自定义 hooks 目录
 |  ├── useXxx.ts          # 每个 hook 单独一个文件，文件名与 hook 同名
@@ -59,11 +57,11 @@ const architectureSection = `\`\`\`
 |     ├── index.tsx
 |     ├── index.module.less
 └─ components             # 可复用公共组件目录，所有跨页面复用的组件统一存放
-  └── card
+   └── card
       ├── index.tsx
       ├── index.module.less
       └── hooks
-        └── useXxx.ts
+         └── useXxx.ts
 \`\`\`
 
 > 项目支持渐进式渲染，初始化项目时，建议将入口和公共文件先初始化好，再按照页面进行初始化。
@@ -93,22 +91,19 @@ const architectureSection = `\`\`\`
 
 comRef 说明：
 - comRef 是 MyBricks 提供的高阶函数，用于创建一个组件；
-- 该组件默认接收保留字段；
-- 该组件是响应式组件，组件内使用 store 中的数据时，数据变更会自动刷新组件；
 
 popupRef 说明：
 - popupRef 是 MyBricks 提供的高阶函数，用于创建浮层类组件（弹窗、抽屉等）；
-
 
 #### less 文件编写规范
 1. 样式文件命名规则：格式为 \`*.module.less\` 的文件，编译时自动启用**CSS Module**模块化处理；格式为 \`*.less\` 的文件编译时不开启CSS Module；
 2. 开发优先统一使用 \`*.module.less\` 格式编写样式，从根源避免全局样式污染、样式重叠冲突问题；
 3. :frame 配置规则（仅页面和浮层类组件需要，普通组件不需要）：
-    - 每个页面（page），必须配置 :frame { width }，宽度参考设计稿或 1440px（若无设计稿）；
-    - 每个浮层类组件（由 popupRef 创建的组件），必须配置 :frame { width; height }，宽度与页面保持一致（同为 1440px 或设计稿宽度），高度在弹窗内容实际高度基础上额外增加 200～300px，以留出遮罩层空间（如内容约 400px 则配置 height: 650px）；
-    - :frame 只控制画布尺寸，不影响运行时布局，必须放在所有 CSS 类之前；
-    - :frame 只在首次创建页面或浮层类组件或者有重大 UI 重构时才需要重新估算；
-    - 页面根组件用宽度100%适配:frame 宽度；
+   - 每个页面（page），必须配置 :frame { width }，宽度参考设计稿或 1440px（若无设计稿）；
+   - 每个浮层类组件（由 popupRef 创建的组件），必须配置 :frame { width; height }，宽度与页面保持一致（同为 1440px 或设计稿宽度），高度在弹窗内容实际高度基础上额外增加 200～300px，以留出遮罩层空间（如内容约 400px 则配置 height: 650px）；
+   - :frame 只控制画布尺寸，不影响运行时布局，必须放在所有 CSS 类之前；
+   - :frame 只在首次创建页面或浮层类组件或者有重大 UI 重构时才需要重新估算；
+   - 页面根组件用宽度100%适配:frame 宽度；
 3. 在选择器中，多个单词之间使用驼峰方式，不能使用 - 连接；
 4. 所有容器类的样式必须包含 \`position: relative\`；
 5. 尽量不要用 calc 等复杂的计算；
