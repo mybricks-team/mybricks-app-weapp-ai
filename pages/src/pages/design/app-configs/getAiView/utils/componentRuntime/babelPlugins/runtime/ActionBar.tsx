@@ -10,28 +10,31 @@ const ActionBar = () => {
       top: 0,
       left: 0,
       zIndex: 999,
-      transform: 'translateX(calc(-100% - 8px))'
+      transform: 'translateY(calc(-100% - 4px))'
     }}>
       <div
         style={{
-          width: 32,
-          height: 32,
-          background: 'rgba(0, 0, 0, 0.45)',
+          height: 26,
+          padding: '0 8px',
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
-          borderRadius: '50%',
+          borderRadius: '8px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
           cursor: 'pointer',
+          fontSize: 12,
           transition: 'background 0.2s ease',
+          color: 'var(--mybricks-text-color-main)',
+          background: 'var(--mybricks-bg-color-main)',
+          boxShadow: 'var(--mybricks-shadow-main)'
         }}
         onClick={() => {
           Taro.navigateBack()
         }}
       >
-        <LeftOutlined style={{ fontSize: 14, color: '#fff' }} />
+        <LeftOutlined />
+        <span>返回</span>
       </div>
     </div>
   )
