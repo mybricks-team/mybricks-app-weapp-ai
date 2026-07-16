@@ -11,5 +11,11 @@ export default {
   canvas: {
     width: 414,
     height: 896
-  }
+  },
+  eslint: {
+    globals: {
+      defineAppConfig: 'readonly',
+      definePageConfig: 'readonly',
+    },
+  },
 }
