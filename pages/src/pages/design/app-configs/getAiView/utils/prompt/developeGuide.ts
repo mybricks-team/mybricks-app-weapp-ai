@@ -11,6 +11,7 @@ const firstOfAll = `- 开发宪章
   - 细节：在每个细节都精心完善；
   - 响应式：保证合理统一的间距，以及支持宽度变化自适应的代码；
   - 画布宽度：414px；
+  - 禁止使用 emoji
 - 拆分逻辑
   - 精准识别到底是页面还是弹窗，对其进行拆分，如果是页面，需要在\`app.config.ts\`中的pages进行配置，如果是tab页，需要同时在\`app.config.ts\`中的pages以及tabBar.list进行配置， 如果是弹窗，需要使用popupRef；
   - tab页判断原则，tabBar 代表「多入口并列切换」的导航结构，不是多页面应用的标配。判断标准：
@@ -104,11 +105,14 @@ popupRef 说明：
    - :frame 只控制画布尺寸，不影响运行时布局，必须放在所有 CSS 类之前；
    - :frame 只在首次创建页面或浮层类组件或者有重大 UI 重构时才需要重新估算；
    - 页面根组件用宽度100%适配:frame 宽度；
-3. 在选择器中，多个单词之间使用驼峰方式，不能使用 - 连接；
-4. 所有容器类的样式必须包含 \`position: relative\`；
-5. 尽量不要用 calc 等复杂的计算；
-6. 动效、动画等效果，尽量使用 css3 的方式实现，例如 transition、animation 等；
-7. 不使用 :before、:after 等伪类选择器来实现 dom；
+3. 选择器命名规范，多个单词之间必须使用驼峰方式（camelCase），禁止使用短横线连接（ kebab-case）；
+4. CSS属性语法规范，必须使用短横线连接（kebab-case）;
+5. 所有容器类的样式必须包含 \`position: relative\`；
+6. 尽量不要用 calc 等复杂的计算；
+7. 动效、动画等效果，尽量使用 css3 的方式实现，例如 transition、animation 等；
+8. 不使用 :before、:after 等伪类选择器来实现 dom；
+9. 禁止使用任何标签选择器，例如：*, page, body, view, text, input，强制使用类选择器（className），例如 .container, .title, .inputWrapper
+10. CSS变量必须添加项目特有前缀，避免与其他框架的变量冲突，例如：\`--myApp-color-primary: #007AFF;\`；
 
 #### hooks/ 文件夹编写规范
 当组件内存在相对独立、可复用或逻辑复杂的逻辑时，将其抽取为自定义 hook，放在同级 \`hooks/\` 文件夹中，每个 hook 对应一个独立文件。

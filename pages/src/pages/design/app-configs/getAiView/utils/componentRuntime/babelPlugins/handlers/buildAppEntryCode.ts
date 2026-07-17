@@ -50,7 +50,6 @@ const buildAppEntryCode = (appConfig: Taro.AppConfig, ) => {
       Current.page = null
 
       var config = ${JSON.stringify(appConfig)}
-      window.__taroAppConfig = config
 
       config.routes = [
         ${pages.reduce((pre, page) => {
@@ -83,9 +82,9 @@ const buildAppEntryCode = (appConfig: Taro.AppConfig, ) => {
           <MyBricksActionBar />
           <div
             id="${appConfig.appId}Container"
+            className="customDebugContainer"
             style={{
               width: '100%',
-              height: '100vh',
               overflow: 'hidden'
             }}
           >

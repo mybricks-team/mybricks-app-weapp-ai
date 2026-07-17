@@ -15,3 +15,21 @@ taro-textarea-core {
 input {
   text-align: inherit;
 }
+
+.taro_page{
+  max-height: unset !important;
+}
+
+/**
+ * 调试态下的容器高度
+ */
+.customDebugContainer{
+  height: 896px;
+}
+
+/**
+ * 调试态度下的容器高度
+*/
+.customDesginContainer{
+  min-height: 896px;
+}
