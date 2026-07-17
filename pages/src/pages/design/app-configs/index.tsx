@@ -379,7 +379,7 @@ export default function appConfig(
       // }),
     ],
     comLibLoader() {
-      return ['https://p4-ec.ecukwai.com/kos/nlav11092/vibe-coding/comlib/2.0.53/edit.593a5a20259f05e7.js']
+      return ['https://p4-ec.ecukwai.com/kos/nlav11092/vibe-coding/comlib/2.0.98/edit.7cbe3f0d0d33830d.js']
     },
     pageContentLoader() {
       //加载页面内容

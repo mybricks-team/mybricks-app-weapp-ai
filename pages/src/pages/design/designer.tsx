@@ -55,10 +55,7 @@ import classNames from 'classnames'
 import { sendPageDeps } from './utils/sendPageDeps'
 import { BranchMergeModal } from './components/branch-merge-modal'
 import { useBranch } from './hooks/useBranch'
-import type { TitlebarRef as DesignerTitlebarRef } from '../../../../../sdk-for-app/src/ui/components/Titlebar'
-import { DesignerTitleBar } from '../../../../../sdk-for-app/src/ui/components/Titlebar'
-import type { TitlebarRef as DesignerToolbarRef } from '../../../../../sdk-for-app/src/ui/components/Toolbar'
-import { DesignerToolBar } from '../../../../../sdk-for-app/src/ui/components/Toolbar'
+import { DesignerTitleBar, DesignerToolBar } from '@mybricks/sdk-for-app/ui'
 import {
   useAiPrdExport,
   useAiSourceCodeExport,
@@ -78,8 +75,8 @@ const getAppSetting = async () => {
 }
 
 export default function MyDesigner({ appData: originAppData }) {
-  const toolbarRef = useRef<DesignerToolbarRef | null>(null)
-  const titleRef = useRef<DesignerTitlebarRef | null>(null)
+  const toolbarRef = useRef(null)
+  const titleRef = useRef(null)
   window.fileId = originAppData.fileId
   ;(window as any)._disableSmartLayout = originAppData?.config?.['mybricks-app-pcspa']?.config?.feature?.disableSmartLayout; // 是否禁用智能布局
 
