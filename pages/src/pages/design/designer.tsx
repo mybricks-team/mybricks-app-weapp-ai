@@ -1041,14 +1041,26 @@ export default function MyDesigner({ appData: originAppData }) {
   // 上报页面的开发数据
   usePageStayTime({ operable, appData: ctx, currentRef: designerRef })
 
+  const getExportToJSON = useCallback(() => {
+    return designerRef.current?.toJSON?.()
+  }, [])
+
+  const getPrdTitle = useCallback(() => {
+    return ctx.fileName?.replace(/\.[^.]+$/, '')
+  }, [ctx.fileName])
+
+  const getRuntimeFiles = useCallback((comId) => {
+    return (window as any)._forApp_[comId].getFiles()
+  }, [])
+
   const { handleExport } = useAiSourceCodeExport({
-    getExportToJSON: () => designerRef.current?.toJSON?.(),
+    getExportToJSON,
     folderName: 'App',
   })
   const { handleExportPrd } = useAiPrdExport({
-    getExportToJSON: () => designerRef.current?.toJSON?.(),
-    getPrdTitle: () => ctx.fileName?.replace(/\.[^.]+$/, ''),
-    getRuntimeFiles: (comId) => (window as any)._forApp_[comId].getFiles(),
+    getExportToJSON,
+    getPrdTitle,
+    getRuntimeFiles,
   })
 
   const TrueDesigner = useMemo(() => {
