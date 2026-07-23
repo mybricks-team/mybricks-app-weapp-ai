@@ -15,39 +15,35 @@ export default ({ user, key }: any) => {
         {
           format: "openai",
           providerId: "manateeai",
-          baseUrl: "https://new-api.manateeai.com/v1/chat/completions",
-          apiKey: "sk-8M0pxwcucVOECOFhB470Ea9d09444882A8A955F5863194E8",
+          baseUrl: "https://ai-gateway.manateeai.com/v1/chat/completions",
+          apiKey: "sk-lTRsuEIg3QqnEsckv3INvE5SVvdix4axB2VkJJE8e7QlkHr3",
           models: [
             {
-              id: "qwen3.6-plus",
-              name: "qwen3.6-plus",
+              id: "glm-5.2",
+              name: "glm-5.2",
+            },
+            {
+              id: "kimi-k2.7-code-highspeed",
+              name: "kimi-k2.7-code-highspeed"
             },
             {
               id: "kimi-k2.6",
-              name: "Kimi-K2.6",
+              name: "kimi-k2.6"
             },
-            // {
-            //   id: "claude-opus-4-8",
-            //   name: "claude-opus-4-8",
-            // },
+            {
+              id: "kimi-k2.7-code",
+              name: "kimi-k2.7-code",
+            },
             {
               id: "deepseek-v4-pro",
               name: "deepseek-v4-pro",
             },
+            {
+              id: "deepseek-v4-flash",
+              name: "deepseek-v4-flash"
+            }, 
           ],
         },
-        // {
-        //   format: "openai",
-        //   providerId: "moonshot",
-        //   baseUrl: "https://api.moonshot.cn/v1/chat/completions",
-        //   apiKey: "sk-HF3CPQB5Ye8c0xBrdivDUDR1snDjHvNyrpqYZxj8YfRSLT7i",
-        //   models: [
-        //     {
-        //       id: "kimi-k2.6",
-        //       name: "Kimi-K2.6",
-        //     }
-        //   ],
-        // }
       ],
     },
     tools: [operateApiTool],
