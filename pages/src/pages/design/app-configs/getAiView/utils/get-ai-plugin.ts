@@ -3,6 +3,7 @@ import componentRuntime from "./componentRuntime";
 import promptSections from "./prompt";
 import { createOperateApiTool } from "./tools/operate-api";
 import skills from "./skills";
+import { onRequest } from "@/utils/aiRequest";
 
 export default ({ user, key }: any) => {
   const operateApiTool = createOperateApiTool(key);
@@ -13,10 +14,7 @@ export default ({ user, key }: any) => {
     llm: {
       providers: [
         {
-          format: "openai",
-          providerId: "manateeai",
-          baseUrl: "https://ai-gateway.manateeai.com/v1/chat/completions",
-          apiKey: "sk-lTRsuEIg3QqnEsckv3INvE5SVvdix4axB2VkJJE8e7QlkHr3",
+          providerId: "auto",
           models: [
             {
               id: "glm-5.2",
@@ -43,6 +41,7 @@ export default ({ user, key }: any) => {
               name: "deepseek-v4-flash"
             }, 
           ],
+          request: onRequest,
         },
       ],
     },

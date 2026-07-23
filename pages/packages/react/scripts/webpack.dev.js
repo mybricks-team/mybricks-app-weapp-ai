@@ -19,7 +19,7 @@ module.exports = merge(common, {
     static: {
       directory: path.join(__dirname, '../templates'),
     },
-    port: 9002,
+    port: 9001,
     host: 'localhost',
     hot: true,
     client: {
@@ -46,7 +46,7 @@ module.exports = merge(common, {
       {
         context: ['/biz/'],
         // target: 'https://my.mybricks.world/',
-        target: 'http://dev.manateeai.com/',
+        target: 'http://work.manateeai.com/',
         secure: false,
         changeOrigin: true,
         logLevel:'debug',
@@ -60,7 +60,7 @@ module.exports = merge(common, {
       {
         context: ['/'],
         // target: 'https://test.mybricks.world/',
-        target: 'http://dev.manateeai.com/',
+        target: 'http://work.manateeai.com/',
         // target: 'https://my.mybricks.world',
         // target: 'http://localhost:3100',
         secure: false,
