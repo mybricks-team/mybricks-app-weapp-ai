@@ -15,14 +15,14 @@ export default {
     frontend: {
       type: 'frontend',
       pattern: /\.(?:tsx|ts|js)$/i,
-      canvas: {
-        width: 414,
-        height: 896
-      },
       getDependencies,
       entryFile: 'app.config.ts',
       mybricksPrompt
     }
+  },
+  canvas: {
+    width: 414,
+    height: 896
   },
   babelPlugins,
   lessPlugins,
