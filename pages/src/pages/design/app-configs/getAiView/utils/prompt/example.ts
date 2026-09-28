@@ -33,7 +33,7 @@ export const APP_CONFIG_CODE = `
   \`\`\`tsx file="pages/signin/index.tsx"
   import { useState } from 'react'
   import dataSource from '../../dataSource'
-  import { comRef } from 'mybricks'
+  import { comRef, logger } from 'mybricks'
   import { View, Text, Button } from '@tarojs/components'
   import css from './index.module.less'
 
@@ -68,11 +68,17 @@ export const APP_CONFIG_CODE = `
     const [loading, setLoading] = useState(false)
 
     const handleSignIn = async () => {
+      logger.info('[SignIn/handleSignIn] 登录按钮点击')
       setLoading(true)
+      const params = {}
       try {
-        const res = await dataSource.signIn({})
+        logger.info('[SignIn/handleSignIn] 请求登录接口', '入参', params)
+        const res = await dataSource.signIn(params)
+        logger.info('[SignIn/handleSignIn] 请求登录接口', '结果', res)
         setWelcomeMsg(res.welcomeMsg)
         setUserType(res.userType)
+      } catch (error) {
+        logger.error('[SignIn/handleSignIn] 登录处理失败', '入参', params, '错误', error)
       } finally {
         setLoading(false)
       }
@@ -105,8 +111,9 @@ export const APP_CONFIG_CODE = `
 
   \`\`\`tsx file="pages/signup/index.tsx"
   import { useState } from 'react'
+  import Taro from '@tarojs/taro'
   import dataSource from '../../dataSource'
-  import { comRef } from 'mybricks'
+  import { comRef, logger } from 'mybricks'
   import { View, Text, Button } from '@tarojs/components'
   import css from './index.module.less'
 
@@ -134,9 +141,18 @@ export const APP_CONFIG_CODE = `
     const [loading, setLoading] = useState(false)
 
     const handleSignUp = async () => {
+      logger.info('[StepRegisterForm/handleSignUp] 注册按钮点击')
       setLoading(true)
+      const params = {}
       try {
-        await dataSource.signUp({})
+        logger.info('[StepRegisterForm/handleSignUp] 请求注册接口', '入参', params)
+        const res = await dataSource.signUp(params)
+        logger.info('[StepRegisterForm/handleSignUp] 请求注册接口', '结果', res)
+        const url = '/pages/signin/index'
+        logger.info('[StepRegisterForm/handleSignUp] 注册成功，跳转登录页', '跳转', { url })
+        Taro.navigateTo({ url })
+      } catch (error) {
+        logger.error('[StepRegisterForm/handleSignUp] 注册处理失败', '入参', params, '错误', error)
       } finally {
         setLoading(false)
       }
